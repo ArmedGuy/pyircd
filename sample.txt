@@ -1,0 +1,14 @@
+:irc.rizon.io 001 ArmedGuy :Welcome to the Rizon Internet Relay Chat Network ArmedGuy
+:irc.rizon.io 002 ArmedGuy :Your host is irc.rizon.io[96.44.144.253/6667], running version hybrid-7.2.3+plexus-3.1.0(20130128_0-537)
+:irc.rizon.io 003 ArmedGuy :This server was created Jan 29 2013 at 22:06:13
+:irc.rizon.io 004 ArmedGuy irc.rizon.io hybrid-7.2.3+plexus-3.1.0(20130128_0-537) CDFGNRSUWXabcdfgijklnopqrsuwxyz BIMNORSabcehiklmnopqstvz Iabehkloqv
+:irc.rizon.io 005 ArmedGuy CALLERID CASEMAPPING=rfc1459 DEAF=D KICKLEN=160 MODES=4 NICKLEN=30 TOPICLEN=390 PREFIX=(qaohv)~&@%+ STATUSMSG=~&@%+ NETWORK=Rizon MAXLIST=beI:250 TARGMAX=ACCEPT:,KICK:1,LIST:1,NAMES:1,NOTICE:4,PRIVMSG:4,WHOIS:1 CHANTYPES=#~ :are supported by this server
+:irc.rizon.io 005 ArmedGuy CHANLIMIT=#:75 CHANNELLEN=50 CHANMODES=beI,k,l,BCMNORScimnpstz ELIST=CMNTU SAFELIST FNC KNOCK AWAYLEN=160 NAMESX UHNAMES EXCEPTS=e INVEX=I :are supported by this server
+:irc.rizon.io 251 ArmedGuy :There are 36 users and 22951 invisible on 16 servers
+:irc.rizon.io 252 ArmedGuy 75 :IRC Operators online
+:irc.rizon.io 254 ArmedGuy 23289 :channels formed
+:irc.rizon.io 255 ArmedGuy :I have 22987 clients and 0 servers
+:irc.rizon.io 265 ArmedGuy 22987 24836 :Current local users 22987, max 24836
+:irc.rizon.io 266 ArmedGuy 22987 24836 :Current global users 22987, max 24836
+:irc.rizon.io 375 ArmedGuy :- irc.rizon.io Message of the Day - 
+:irc.rizon.io 372 ArmedGuy :- _______ Welcome to the Rizon 
