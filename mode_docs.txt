@@ -1,0 +1,123 @@
+      Sets a mode on a Channel or User.
+      UnrealIRCd has got some new Channel & User modes.
+  
+
+      Syntax:  MODE <channel/user> <mode>
+      Example: MODE #Support +tn
+               MODE #Support +ootn hAtbLaDe cb
+
+		### Channel Modes ###
+        
+
+		p = Private channel
+		s = Secret channel
+		i = Invite-only allowed
+		m = Moderated channel, noone can speak except users with mode +voh
+		n = No messages from outside channel
+		t = Only channel operators may set the topic
+		r = Channel is registered
+		R = Requires a registered nickname to join the channel
+		c = No ANSI color can be sent to the channel (ColourBlock)
+		q = Channel owner 
+	     (*)Q = No kicks able in channel unless by U:Lines 
+		O = IRCop only channel (Setable by IRCops)
+		A = Administrator only channel (Setable by Admins)
+		K = /Knock is not allowed
+		V = /Invite is not allowed
+		S = Strip all incoming colours away
+		l <number of max users> = Channel may hold at most <number> of users
+		b <nick!user@host>      = Bans the nick!user@host from the channel
+		k <key>                 = Needs the channel key to join the channel
+		o <nickname>            = Gives operator status to the user
+		v <nickname>            = Gives voice to the user (May talk if chan is +m)
+		L <chan2>               = If +l is full, the next user will auto-join <chan2>
+		a <nickname>            = Gives protection to the user (No kick/drop)
+		e <nick!user@host>      = Exception ban - If someone matches it
+                                            they can join even if a ban matches them
+	    (**)h <nickname>            = Gives halfop status to the user 
+		f [*]<lines>:<seconds>  = Flood protection, if the * is given a user will
+                                            be kick banned when they send <lines> in <seconds>
+                                            If * is not given they are just kicked
+		H                       = No +I users may join that channel. (Setable by Admins).
+		N                       = No nickname changes are permitted in the channel.
+		^                       = Reports Channel modes in bitstring.
+                                            (Only exists in Development Versions i.e #define DEVELOP) 
+		G                       = Makes the channel G Rated. Any words in badwords.channel.conf
+                                            are replaced with <censored> in channel messages. 
+		u                       = "Auditorium". Makes /names and /who #channel only show @'s
+		C                       = No CTCPs allowed in the channel.
+		z                       = Only Clients on a Secure Connection (SSL) can join.
+
+ 		(*)   Channel mode +Q 
+   			This is the 'peace' mode. Noone can kick each other 
+   			except by U:Lines. Bans can be placed though.
+
+		(**)  Channel halfops (+h)  
+  			If you are marked as halfop (% in /names) you can do:
+    		          - Set topic
+  		          - Kick non-ops
+  		          - Set modes +vmntibe
+
+		### User Modes ###
+
+		O = Local IRC Operator
+		o = Global IRC Operator
+		i = Invisible (Not shown in /who searches)
+		w = Can listen to wallop messages
+		g = Can read & send to globops, and locops
+		h = Available for help
+		s = Can listen to server notices
+		k = See's all the /KILL's which were executed
+		S = For services only. (Protects them)
+		a = Is a Services Administrator
+		A = Is a Server Administrator
+		N = Is a Network Administrator
+		T = Is a Tech Admininistator
+		C = Is a Co Administrator
+		c = See's all Connects/Disconnects on local server
+		f = Listen to flood alerts from server
+		r = Identifies the nick as being registered
+		x = Gives the user hidden hostname
+		e = Can listen to server messages sent to +e users
+		b = Can read & send to chatops
+		W = (IRC Operators only) Lets you see when people does a /whois on you
+		q = (Services Admins only) Only U:lines can kick you
+		B = Marks you as being a Bot
+		F = Lets you recieve far Connect notices & Local notices.
+		I = Invisible Join/Part. Makes you being hidden at channels
+		H = (IRC Operators only) Hide IRC Operator status in /who and /whois
+		d = Makes it so you can not recieve channel messages
+		v = Receive infected DCC send rejection notices
+		t = Says that you are using a /vhost
+		G = Filters out all bad words (badwords.message.conf) in messages with <censored>
+		z = Marks the client as being on a Secure Connection (SSL).
+
+		
+		r = Access to /rehash server
+		 h = Oper can send /help ops - gets +h on oper up
+		 g = Oper can send /globops
+		 w = Oper can send /wallops
+		 l = Oper can send /locops
+		 c = Access to do local /squits and /connects
+		 k = Access to do local /kills
+		 b = Oper can /kline users from server
+		 B = Oper can /unkline users from server
+		 n = Oper can send local server notices (/notice $servername message)
+		 u = Oper can set /umode +c
+		 f = Oper can set /umode +f
+		 O = Global oper, flags included: oRDK
+		 o = Local oper, flags included: rhgwlckbBnuf
+		 R = Access to /restart server
+		 D = Access to /die server
+		 K = Access to do global /kills
+		 A = Gets +A on oper up. Server Administrator
+		 a = Gets +a on oper up. Services Administrator
+		 N = Gets +N on oper up. Network Administrator
+		 T = Gets +T on oper up. Technical Administator
+		 C = Gets +C on oper up. Co Administrator
+		 Y = Access to do remote /squits and /connects
+		 z = Can add /zlines
+		 H = Gets +x on oper up.
+		 W = Gets +W on oper up.	  
+		 ^ = Allows to use umode +I
+		 * = Flags AaNCTzSHW^

@@ -1,14 +1,24 @@
-import SocketServer, logger
+import SocketServer, time, logger, config, sys
+from irc.commands.command import UserCommandString
+from irc.handlers import *
 
-class IRCRequestHandler(SocketServer.BaseRequestHandler):
+class InternalRequestHandler(SocketServer.BaseRequestHandler):
+    pass
+
+class IRCConnectionHandler(SocketServer.BaseRequestHandler):
     _alive = True
+    _authed = True
+    _owner = None
     def handle(self):
+        #self.request.setblocking(False)
         tempbuf = ""
-        while _alive:
+        if config.serverpassword:
+            self._authed = False
+        while self._alive:
             try:
                 sockbuf = self.request.recv(4096)
                 if sockbuf == "": # dead connection
-                    _alive = False
+                    self._alive = False
                     self.request.close()
                 else:
                     sockbuf = tempbuf + sockbuf
@@ -17,4 +27,16 @@ class IRCRequestHandler(SocketServer.BaseRequestHandler):
                         tempbuf = pcks.pop() 
                         for pck in pcks:
                             pck = pck.rstrip()
-                            packet = IrcPacket(pck)
+                            self.process(pck)
+            except:
+                for var in sys.exc_info():
+                    logger.error(str("%s" % var).strip())
+                time.sleep(0.01)
+                
+    def process(self, packet):
+        cmd = UserCommandString(packet)
+        if not cmd.valid:
+            return
+        logger.debug("got %s" % cmd.command)
+        
+        

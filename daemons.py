@@ -8,9 +8,9 @@ class Daemon:
     _server = None
     _serverThread = None
     
-    def send(self, to, data, viaSocket="irc"):
+    def send(self, to, data):
         if "internal" in self._server:
-            self._server[viaSocket].sendto(data, to)
+            self._server["internal"].sendto(data, to)
         else:
             self._server.sendto(data, to)
 
@@ -43,9 +43,9 @@ class NodeDaemon(Daemon):
         self._serverThread["internal"].start()
         
         if config.dumb:
-            # download configuration from master server
+            pass # download configuration from master server
         
-        self._server["irc"] = network.servers.ThreadedTCPServer((self.host, self.listenPort), network.handlers.IRCRequestHandler)
+        self._server["irc"] = network.servers.ThreadedTCPServer((self.host, self.listenPort), network.handlers.IRCConnectionHandler)
         self._serverThread["irc"] = threading.Thread(target=self._server["irc"].serve_forever)
         self._serverThread["irc"].daemon = True
     
