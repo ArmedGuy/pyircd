@@ -5,7 +5,7 @@ from irc.handlers import *
 class InternalRequestHandler(SocketServer.BaseRequestHandler):
     pass
 
-class IRCConnectionHandler(SocketServer.BaseRequestHandler):
+class IrcConnectionHandler(SocketServer.BaseRequestHandler):
     _alive = True
     _authed = True
     _owner = None

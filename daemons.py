@@ -1,4 +1,5 @@
 import network.handlers, network.servers, config, threading
+from pyircd.irc import handlers
 
 
 class Daemon:
@@ -7,6 +8,8 @@ class Daemon:
     listenPorts = ()
     _server = None
     _serverThread = None
+
+    _commandHandlers = None
     
     def send(self, to, data):
         if "internal" in self._server:
@@ -16,6 +19,7 @@ class Daemon:
 
 class MasterDaemon(Daemon):
     def __init__(self, host, port):
+        self._commandHandlers = [ handlers.login.NickAuth() ]
         self.serverName = config.servername
         self.host = host
         self.listenPort = port
@@ -45,7 +49,7 @@ class NodeDaemon(Daemon):
         if config.dumb:
             pass # download configuration from master server
         
-        self._server["irc"] = network.servers.ThreadedTCPServer((self.host, self.listenPort), network.handlers.IRCConnectionHandler)
+        self._server["irc"] = network.servers.ThreadedIrcServer((self.host, self.listenPort), self)
         self._serverThread["irc"] = threading.Thread(target=self._server["irc"].serve_forever)
         self._serverThread["irc"].daemon = True
     

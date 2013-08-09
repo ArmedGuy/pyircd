@@ -17,7 +17,7 @@ def hostname():
 def text(data):
     return ":%s" % data
     
-# Base command class
+# Base command-builder class
 class Command:
     _args = None
     def __init__():
@@ -25,6 +25,8 @@ class Command:
     def ToString(self):
         return ' '.join(self._args)
 
+
+# parse incoming commands
 class UserCommandString:
     valid = False
     sender = ""

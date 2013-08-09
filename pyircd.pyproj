@@ -1,50 +1,50 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-    <PropertyGroup>
-        <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-        <SchemaVersion>2.0</SchemaVersion>
-        <ProjectGuid>{ca9b95bd-1536-4de8-8936-1220d4e148a9}</ProjectGuid>
-        <ProjectHome />
-        <StartupFile>run.py</StartupFile>
-        <SearchPath />
-        <WorkingDirectory>.</WorkingDirectory>
-        <OutputPath>.</OutputPath>
-        <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
-        <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
-    </PropertyGroup>
-    <PropertyGroup Condition="'$(Configuration)' == 'Debug'" />
-    <PropertyGroup Condition="'$(Configuration)' == 'Release'" />
-    <ItemGroup>
-        <Compile Include="config.py" />
-        <Compile Include="daemons.py" />
-        <Compile Include="logger.py" />
-        <Compile Include="run.py" />
-        <Compile Include="__init__.py" />
-        <Compile Include="irc\channel.py" />
-        <Compile Include="irc\flags.py" />
-        <Compile Include="irc\user.py" />
-        <Compile Include="irc\__init__.py" />
-        <Compile Include="irc\commands\command.py" />
-        <Compile Include="irc\commands\errors.py" />
-        <Compile Include="irc\commands\payloads.py" />
-        <Compile Include="irc\commands\replies.py" />
-        <Compile Include="irc\commands\__init__.py" />
-        <Compile Include="irc\handlers\login.py" />
-        <Compile Include="irc\handlers\__init__.py" />
-        <Compile Include="network\handlers.py" />
-        <Compile Include="network\servers.py" />
-        <Compile Include="network\__init__.py" />
-        <Compile Include="tests\pyircbot.py" />
-        <Compile Include="tests\__init__.py" />
-        <Content Include="mode_docs.txt" />
-        <Content Include="sample.txt" />
-    </ItemGroup>
-    <ItemGroup>
-        <Folder Include="irc" />
-        <Folder Include="irc\commands" />
-        <Folder Include="irc\handlers" />
-        <Folder Include="network" />
-        <Folder Include="tests" />
-    </ItemGroup>
-    <Import Project="$(MSBuildToolsPath)\Microsoft.Common.targets" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{ca9b95bd-1536-4de8-8936-1220d4e148a9}</ProjectGuid>
+    <ProjectHome />
+    <StartupFile>run.py</StartupFile>
+    <SearchPath />
+    <WorkingDirectory>.</WorkingDirectory>
+    <OutputPath>.</OutputPath>
+    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
+    <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)' == 'Debug'" />
+  <PropertyGroup Condition="'$(Configuration)' == 'Release'" />
+  <ItemGroup>
+    <Compile Include="config.py" />
+    <Compile Include="daemons.py" />
+    <Compile Include="logger.py" />
+    <Compile Include="run.py" />
+    <Compile Include="__init__.py" />
+    <Compile Include="irc\channel.py" />
+    <Compile Include="irc\flags.py" />
+    <Compile Include="irc\user.py" />
+    <Compile Include="irc\__init__.py" />
+    <Compile Include="irc\commands\command.py" />
+    <Compile Include="irc\commands\errors.py" />
+    <Compile Include="irc\commands\payloads.py" />
+    <Compile Include="irc\commands\replies.py" />
+    <Compile Include="irc\commands\__init__.py" />
+    <Compile Include="irc\commands\handlers\login.py" />
+    <Compile Include="irc\commands\handlers\__init__.py" />
+    <Compile Include="network\handlers.py" />
+    <Compile Include="network\servers.py" />
+    <Compile Include="network\__init__.py" />
+    <Compile Include="tests\pyircbot.py" />
+    <Compile Include="tests\__init__.py" />
+    <Content Include="mode_docs.txt" />
+    <Content Include="sample.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="irc" />
+    <Folder Include="irc\commands" />
+    <Folder Include="irc\commands\handlers\" />
+    <Folder Include="network" />
+    <Folder Include="tests" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.Common.targets" />
 </Project>
