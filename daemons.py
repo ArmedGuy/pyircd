@@ -1,5 +1,5 @@
-import network.handlers, network.servers, config, threading
-from pyircd.irc import handlers
+import network.handlers, network.servers, config, threading, irc.handlers.login
+
 
 
 class Daemon:
@@ -10,6 +10,10 @@ class Daemon:
     _serverThread = None
 
     _commandHandlers = None
+
+    # two most important arrays =D (needs to be thread safe)
+    users = []
+    channels = []
     
     def send(self, to, data):
         if "internal" in self._server:
@@ -19,12 +23,12 @@ class Daemon:
 
 class MasterDaemon(Daemon):
     def __init__(self, host, port):
-        self._commandHandlers = [ handlers.login.NickAuth() ]
+        self._commandHandlers = [ irc.handlers.login.NickHandler(self) ]
         self.serverName = config.servername
         self.host = host
         self.listenPort = port
         
-    def self(self):
+    def start(self):
         self._server = network.servers.UDPServer((self.host, self.listenPort), network.handlers.InternalRequestHandler)
         self._serverThread = threading.Thread(target=self._server.serve_forever)
         self._serverThread.daemon = True
@@ -33,6 +37,8 @@ class MasterDaemon(Daemon):
         
 class NodeDaemon(Daemon):
     def __init__(self, host, port):
+        self._commandHandlers = [ irc.handlers.login.NickHandler(self), irc.handlers.login.UserHandler(self) ]
+
         self.serverName = config.servername
         self.host = host
         self.listenPort = port
@@ -54,5 +60,10 @@ class NodeDaemon(Daemon):
         self._serverThread["irc"].daemon = True
     
         self._serverThread["irc"].start()
+
+    def delegateRequest(self, handler, cmd):
+        for hnd in self._commandHandlers:
+            if cmd.command in hnd.handlesCommands:
+                hnd.handle(handler, cmd)
         
         

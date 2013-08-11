@@ -1,17 +1,13 @@
 import threading
 import SocketServer
-import pyircd.network.handlers
+import network.handlers
 
 
 class ThreadedIrcServer(SocketServer.ThreadingMixIn, SocketServer.TCPServer):
-    _currentDaemon = None
+    daemon = None
     def __init__(self, serveraddr, daemon):
-        self._currentDaemon = daemon
-        SocketServer.TCPServer.__init(serveraddr, pyircd.irc.handlers.IrcConnectionHandler)
-
-    def finish_request(self, request, clientaddr):
-        c = BaseServer.RequestHandlerClass(request, clientaddr, self.currentDaemon)
-        c.handle()
+        self.daemon = daemon
+        SocketServer.TCPServer.__init__(self, serveraddr, network.handlers.IrcConnectionHandler)
     
 class UDPServer(SocketServer.UDPServer):
     pass

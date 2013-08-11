@@ -1,0 +1,20 @@
+﻿S.zeDE@0KN.Z]K[~	P#irc.rizon.io 372 ArmedGuy :-  o Want a vhost? /msg hostserv help request
+:irc.rizon.io 372 ArmedGuy :- 
+:irc.rizon.io 372 ArmedGuy :- _______ Open Proxy's & Transit Provider ______________________________
+:irc.rizon.io 372 ArmedGuy :- 
+:irc.rizon.io 372 ArmedGuy :-  o The use of this server & network is a privilege, not a right.
+:irc.rizon.io 372 ArmedGuy :- 
+:irc.rizon.io 372 ArmedGuy :-  o IRC is a free media, therefore no person or entity involved
+:irc.rizon.io 372 ArmedGuy :-  o with *.rizon.net and irc.rizon.io takes any responsibility
+:irc.rizon.io 372 ArmedGuy :-  o whatsoever for the opinions expressed or the actions taken by
+:irc.rizon.io 372 ArmedGuy :-  o users. Absolutely no warranty is either expressed or implied.
+:irc.rizon.io 376 ArmedGuy :End of /MOTD command.
+:ArmedGuy!~ArmedGuy@3.on.3.on.3.on.3.on.3 MODE ArmedGuy :+irx
+:irc.znc.in 306 ArmedGuy :You have been marked as being away
+:ArmedGuy!~ArmedGuy@3.on.3.on.3.on.3.on.3 JOIN :#NRNSAdmins
+:irc.rizon.io 332 ArmedGuy #NRNSAdmins :IrcBoot under testing
+:irc.rizon.io 333 ArmedGuy #NRNSAdmins ArmedGuy!~ArmedGuy@3.on.3.on.3.on.3.on.3 1368972267
+:irc.rizon.io 353 ArmedGuy = #NRNSAdmins :~@ArmedGuy EU_COD4_1 EU_COD4_2 &@Source US_COD4_1 US_COD4_2
+:irc.rizon.io 366 ArmedGuy #NRNSAdmins :End of /NAMES list.
+:***!znc@znc.in PRIVMSG #NRNSAdmins :Buffer Playback...
+:US_COD4_1!~b3ircboot@1E85672F.62E34A61.31655310.IP PRIVMSG #NRNSAdmins :[00:42:54] 4,0Player SRB|n

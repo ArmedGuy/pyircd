@@ -21,6 +21,7 @@ standard = pyircbot.StandardBotRoutines(bot, settings)
 standard.queueJoinChannels(["#Pie-Studios"])
 
 bot.connect()
+bot.out("derp\r\n")
     
     
 while True:

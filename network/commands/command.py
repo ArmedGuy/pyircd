@@ -22,6 +22,15 @@ class Command:
     _args = None
     def __init__():
         self._args = []
+    def initServerMessage(self, cmd):
+        self._args = []
+        self.arg(hostname())
+        self.arg(cmd)
+    def to(self, user):
+        if hasattr(user, "nick"):
+            self.arg(user.nick)
+    def arg(self, argument):
+        self._args.append(argument)
     def ToString(self):
         return ' '.join(self._args)
 
@@ -50,7 +59,7 @@ class UserCommandString:
         i = 0
         for block in blocks:
             if(block[0] == ":"):
-                self.args.append(" ".join(blocks[i:]))
+                self.args.append(" ".join(blocks[i:])[1:])
             else:
                 self.args.append(block)
             i = i + 1
