@@ -1,5 +1,5 @@
-import irc.handlers, irc.user, network, network.commands.payloads, logger, socket
-class NickHandler(irc.handlers.CommandHandler):
+import network, network.commands.payloads, logger, socket, irc.user, irc.commandhandler
+class NickHandler(irc.commandhandler.CommandHandler):
     def __init__(self, daemon):
         self.handlesCommands = ["NICK"]
         self._daemon = daemon
@@ -18,7 +18,7 @@ class NickHandler(irc.handlers.CommandHandler):
             else:
                 handler.cache["nick-auth-data"] = cmd.args[0]
 
-class UserHandler(irc.handlers.CommandHandler):
+class UserHandler(irc.commandhandler.CommandHandler):
     def __init__(self, daemon):
         self.handlesCommands = ["USER"]
         self._daemon = daemon
@@ -31,4 +31,3 @@ class UserHandler(irc.handlers.CommandHandler):
             network.commands.payloads.OnUserConnect(handler.user)
         else:
             handler.cache["user-auth-data"] = (cmd.args[0], cmd.args[3])
-        

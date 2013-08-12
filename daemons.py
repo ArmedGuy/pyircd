@@ -1,6 +1,4 @@
-import network.handlers, network.servers, config, threading, irc.handlers.login
-
-
+import network.handlers, network.servers, config, threading, irc.handlers
 
 class Daemon:
     serverName = ""
@@ -23,7 +21,7 @@ class Daemon:
 
 class MasterDaemon(Daemon):
     def __init__(self, host, port):
-        self._commandHandlers = [ irc.handlers.login.NickHandler(self) ]
+        self._commandHandlers = irc.handlers.getHandlers(self)
         self.serverName = config.servername
         self.host = host
         self.listenPort = port
@@ -37,7 +35,8 @@ class MasterDaemon(Daemon):
         
 class NodeDaemon(Daemon):
     def __init__(self, host, port):
-        self._commandHandlers = [ irc.handlers.login.NickHandler(self), irc.handlers.login.UserHandler(self) ]
+
+        self._commandHandlers = irc.handlers.getHandlers(self)
 
         self.serverName = config.servername
         self.host = host

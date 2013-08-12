@@ -30,7 +30,10 @@ class Command:
         if hasattr(user, "nick"):
             self.arg(user.nick)
     def arg(self, argument):
-        self._args.append(argument)
+        try:
+            self._args.append(str(argument))
+        except:
+            self._args.append("%s" % argument)
     def ToString(self):
         return ' '.join(self._args)
 

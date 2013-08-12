@@ -26,4 +26,6 @@ class User():
     def send(self, data):
         if self._socket:
             self._socket.send("%s\r\n" % data)
+            if hasattr(config, "debug"):
+                logger.debug(data, True, False)
     

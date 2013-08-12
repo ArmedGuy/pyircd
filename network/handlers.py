@@ -39,6 +39,8 @@ class IrcConnectionHandler(SocketServer.BaseRequestHandler):
                 time.sleep(0.01)
                 
     def process(self, packet):
+        if hasattr(config, 'debug'):
+            logger.debug(packet, True, False)
         cmd = UserCommandString(packet)
         if not cmd.valid:
             self.alive = False

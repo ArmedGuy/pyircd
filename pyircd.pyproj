@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{ca9b95bd-1536-4de8-8936-1220d4e148a9}</ProjectGuid>
+    <ProjectGuid>{7cbb8530-8a25-46ea-ae83-34b861ca337c}</ProjectGuid>
     <ProjectHome />
     <StartupFile>run.py</StartupFile>
     <SearchPath />
@@ -17,6 +17,7 @@
   <ItemGroup>
     <Compile Include="config.py" />
     <Compile Include="daemons.py" />
+    <Compile Include="irc\handlers\ping.py" />
     <Compile Include="logger.py" />
     <Compile Include="run.py" />
     <Compile Include="__init__.py" />
@@ -24,26 +25,28 @@
     <Compile Include="irc\flags.py" />
     <Compile Include="irc\user.py" />
     <Compile Include="irc\__init__.py" />
-    <Compile Include="irc\commands\command.py" />
-    <Compile Include="irc\commands\errors.py" />
-    <Compile Include="irc\commands\payloads.py" />
-    <Compile Include="irc\commands\replies.py" />
-    <Compile Include="irc\commands\__init__.py" />
-    <Compile Include="irc\commands\handlers\login.py" />
-    <Compile Include="irc\commands\handlers\__init__.py" />
+    <Compile Include="irc\handlers\login.py" />
+    <Compile Include="irc\handlers\__init__.py" />
     <Compile Include="network\handlers.py" />
     <Compile Include="network\servers.py" />
     <Compile Include="network\__init__.py" />
+    <Compile Include="network\commands\command.py" />
+    <Compile Include="network\commands\errors.py" />
+    <Compile Include="network\commands\payloads.py" />
+    <Compile Include="network\commands\replies.py" />
+    <Compile Include="network\commands\__init__.py" />
     <Compile Include="tests\pyircbot.py" />
     <Compile Include="tests\__init__.py" />
-    <Content Include="mode_docs.txt" />
-    <Content Include="sample.txt" />
+    <Content Include="docs\mode_docs.txt" />
+    <Content Include="docs\motd.txt" />
+    <Content Include="docs\sample.txt" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="irc" />
-    <Folder Include="irc\commands" />
-    <Folder Include="irc\commands\handlers\" />
+    <Folder Include="irc\handlers" />
     <Folder Include="network" />
+    <Folder Include="network\commands" />
+    <Folder Include="docs\" />
     <Folder Include="tests" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.Common.targets" />

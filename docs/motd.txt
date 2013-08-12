@@ -1,0 +1,15 @@
+___________________ Welcome to the Boardcast.in IRC Network! _________________________
+
+Welcome to the localhost part of the Boardcast.in IRC Network!
+Listening on ports 6660 - 6669, 7000 SSL: 6697, 9999
+
+____________________ Server Rules _______________________________________
+
+ o No Flooding
+ o No Bots
+ o No Clones
+ o No Spamming
+ o No Takeovers
+ o Clients must respond to VERSION requests!
+ o Access granted to this server is a privilege.
+ o Staff members may disconnect clients for any or no reason!
