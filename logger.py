@@ -9,12 +9,12 @@ def write(data, toConsole=True, toFile=True):
     data = "[%s]%s" % (date,data)
     if log_file != None:
         if toConsole: 
-            print "%s\n" % data
+            print "%s" % data
         if toFile: 
             log_file.write("%s\n" % data)
     else:
         if toConsole:
-            print "%s\n" % data
+            print "%s" % data
         print "Logfile not initialized!"
 
 def debug(data, toConsole=True, toFile=True):

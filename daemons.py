@@ -34,6 +34,7 @@ class MasterDaemon(Daemon):
         self._serverThread.start()
         
 class NodeDaemon(Daemon):
+    netstats = None
     def __init__(self, host, port):
 
         self._commandHandlers = irc.handlers.getHandlers(self)
@@ -43,6 +44,8 @@ class NodeDaemon(Daemon):
         self.listenPort = port
         self._serverThread = {}
         self._server = {}
+
+        self.netstats = network.network_stats(self)
     
     def start(self):
         self._server["internal"] = network.servers.UDPServer((self.host, self.listenPort), network.handlers.InternalRequestHandler)

@@ -1,4 +1,4 @@
-import re, flags, logger
+import re, flags, logger, config
 
 username_regex = re.compile("/\A([a-z_\-\[\]\\^{}|`][a-z0-9_\-\[\]\\^{}|`]{2,15})\z/i")
 
@@ -9,6 +9,7 @@ class User():
     nick = ""
     ident = ""
     hostname = ""
+    real_hostname = ""
 
     realname = ""
     

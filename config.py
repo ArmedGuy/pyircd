@@ -21,14 +21,43 @@ log_file = "console.log"
 motd_file = "motd.txt" # file containing the message of the day
 motd = [] # will be filled
 
+daemonstarted = "" # time when daemon was started
+
 debug = True
 
+# stuff that is listed in isupport
+isupport = []
+support = {
+    "CASEMAPPING": "rfc1459", #
+    "PREFIX": "(qaohv)~&@%+",
+    "CHANTYPES": "#~",
+    "KICKLEN": "160",
+    "MODES": "4",
+    "NICKLEN": "32",
+    "TOPICLEN": "256",
+    "STATUSMSG": "~&@%+",
+    "NETWORK": "Boardcast.in", # supposed to be replaced
+    "MAXLIST": "beI:250",
+    "CHANLIMIT": "#~:75",
+    "CHANNELLEN": "50",
+    "CHANMODES": "beI,k,l,BCMNORScimnpstz",
+    "SAFELIST": "",
+    "FNC": "",
+    "KNOCK": "",
+    "AWAYLEN": "160",
+    "EXCEPTS": "e",
+    "INVEX": "I"
+}
+
 def init():
+
+    # resolve "dynamic" servername
     global servername
     if servername[0] == ".":
         import socket
         servername = "%s%s" % (socket.gethostname(), servername)
 
+    # load MOTD
     try:
         global motd, motd_file
         motd = []
@@ -37,3 +66,23 @@ def init():
             motd.append(line.rstrip())
     except:
         pass
+
+    # compile ISUPPORT list
+    global support, isupport
+    l = []
+    for key in support.keys():
+        if support[key] == "":
+            l.append(key)
+        else:
+            l.append("%s=%s" % (key, support[key]))
+        if len(l) == 10:
+            isupport.append(" ".join(l))
+            l = []
+    if len(l) != 0:
+        isupport.append(" ".join(l))
+        l = None
+
+    # compute daemon start time for RPL_004
+    global daemonstarted
+    import datetime
+    daemonstarted = datetime.datetime.now().strftime("%Y-%m-%d %H:%M")

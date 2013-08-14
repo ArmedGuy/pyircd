@@ -1,4 +1,6 @@
-﻿S.zeDE@0KN.Z]K[~	P#irc.rizon.io 372 ArmedGuy :-  o Want a vhost? /msg hostserv help request
+﻿Via BNC:
+
+S.zeDE@0KN.Z]K[~	P#irc.rizon.io 372 ArmedGuy :-  o Want a vhost? /msg hostserv help request
 :irc.rizon.io 372 ArmedGuy :- 
 :irc.rizon.io 372 ArmedGuy :- _______ Open Proxy's & Transit Provider ______________________________
 :irc.rizon.io 372 ArmedGuy :- 

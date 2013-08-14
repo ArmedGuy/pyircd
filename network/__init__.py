@@ -1,19 +1,55 @@
-import network.commands, network.handlers, network.servers
+import network.commands, network.handlers, network.servers, socket, time, md5, config
+from network.commands.replies import RPL_NOTICE
+def generateUserHostname(ip):
+    if "." in ip:
+        parts = ip.split(".")
+        parts[0] = md5.new(str(parts[0])).hexdigest()[0:6].upper()
+        parts[1] = md5.new(str(parts[1])).hexdigest()[0:6].upper()
+        parts[2] = md5.new(str(parts[2])).hexdigest()[0:6].upper()
+        parts[3] = "IP"
+        return ".".join(parts)
+    return "unknown.host"
 
-import socket
-def getUserHostname(ip): #TODO: mask part of the hostname
+def getUserHostname(con): #TODO: mask part of the hostname
     time = socket.getdefaulttimeout()
     socket.setdefaulttimeout(1)
+    real_hostname = ""
+    hostname = ""
     try:
+        ip = con.getpeername()[0]
+
+        con.send(RPL_NOTICE(config.servername, "AUTH", "*** Looking up hostname").ToPacket())
         h = socket.gethostbyaddr(ip)
         socket.setdefaulttimeout(time)
-        return h[0]
+        con.send(RPL_NOTICE(config.servername, "AUTH", "*** Found your hostname").ToPacket())
+        real_hostname = h[0]
+        hostname = real_hostname
+        if "." in real_hostname:
+            parts = real_hostname.split(".")
+            if len(parts) > 3:
+                parts[0] = "mask-%d" % int(time.time())
+                hostname = ".".join(parts)
+            else:
+                hostname = generateUserHostname(ip)
+        else:
+            hostname = generateUserHostname(ip)
+
     except:
         socket.setdefaulttimeout(time)
-        return "unknown.host"
+        con.send(RPL_NOTICE(config.servername, "AUTH", "*** Hostname not found").ToPacket())
+        hostname = generateUserHostname(ip)
+        real_hostname = ip
+
+    finally:
+        con.send(RPL_NOTICE(config.servername, "AUTH", "*** Your hostname is masked (%s)" % real_hostname).ToPacket())
+        return (hostname,real_hostname)
 
 
 class network_stats:
+
+    _daemon = None
+    def __init__(self, daemon):
+        self._daemon = daemon
 
     # global stuff
 
@@ -55,5 +91,3 @@ class network_stats:
     def _get_local_servers(self):
         return 0
     localservers = property(_get_local_servers)
-
-netstats = network_stats()

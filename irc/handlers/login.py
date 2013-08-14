@@ -1,4 +1,4 @@
-import network, network.commands.payloads, logger, socket, irc.user, irc.commandhandler
+import network, network.commands.payloads, logger, socket, irc.user, irc.commandhandler, network.commands.replies
 class NickHandler(irc.commandhandler.CommandHandler):
     def __init__(self, daemon):
         self.handlesCommands = ["NICK"]
@@ -10,13 +10,21 @@ class NickHandler(irc.commandhandler.CommandHandler):
             # change nick
             pass
         else:
-            # TODO: check if username is available
+            # TODO: check if username is available and accepted
             if "user-auth-data" in handler.cache:
-                handler.user = irc.user.User(handler.request, cmd.args[0], handler.cache["user-auth-data"][0], network.getUserHostname(handler.request.getpeername()[0]))
+                host = network.getUserHostname(handler.request)
+                handler.user = irc.user.User(
+                    handler.request,
+                    cmd.args[0],
+                    handler.cache["user-auth-data"][0],
+                    host[0]
+                )
+                handler.user.real_hostname = host[1]
                 handler.user.realname = handler.cache["user-auth-data"][1]
-                network.commands.payloads.OnUserConnect(handler.user)
+                network.commands.payloads.OnUserConnect(self._daemon, handler.user)
             else:
                 handler.cache["nick-auth-data"] = cmd.args[0]
+
 
 class UserHandler(irc.commandhandler.CommandHandler):
     def __init__(self, daemon):
@@ -26,8 +34,15 @@ class UserHandler(irc.commandhandler.CommandHandler):
         if len(cmd.args) != 4:
             return
         if "nick-auth-data" in handler.cache:
-            handler.user = irc.user.User(handler.request, handler.cache["nick-auth-data"], cmd.args[0], network.getUserHostname(handler.request.getpeername()[0]))
+            host = network.getUserHostname(handler.request)
+            handler.user = irc.user.User(
+                handler.request,
+                handler.cache["nick-auth-data"],
+                cmd.args[0],
+                host[0]
+            )
+            handler.user.real_hostname = host[1]
             handler.user.realname = cmd.args[3]
-            network.commands.payloads.OnUserConnect(handler.user)
+            network.commands.payloads.OnUserConnect(self._daemon, handler.user)
         else:
             handler.cache["user-auth-data"] = (cmd.args[0], cmd.args[3])

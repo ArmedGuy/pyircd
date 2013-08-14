@@ -33,10 +33,12 @@ class IrcConnectionHandler(SocketServer.BaseRequestHandler):
                             self.process(pck)
             except socket.error:
                 self.alive = False
+            """
             except:
                 for var in sys.exc_info():
                     logger.error(str("%s" % var).strip())
                 time.sleep(0.01)
+            """
                 
     def process(self, packet):
         if hasattr(config, 'debug'):

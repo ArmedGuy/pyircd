@@ -37,8 +37,12 @@
     <Compile Include="network\commands\__init__.py" />
     <Compile Include="tests\pyircbot.py" />
     <Compile Include="tests\__init__.py" />
+    <Content Include="docs\endofmotd.txt">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="docs\isupport.txt" />
     <Content Include="docs\mode_docs.txt" />
-    <Content Include="docs\motd.txt" />
+    <Content Include="motd.txt" />
     <Content Include="docs\sample.txt" />
   </ItemGroup>
   <ItemGroup>

@@ -23,19 +23,24 @@ class Command:
     def __init__():
         self._args = []
     def initServerMessage(self, cmd):
-        self._args = []
         self.arg(hostname())
         self.arg(cmd)
-    def to(self, user):
-        if hasattr(user, "nick"):
-            self.arg(user.nick)
+    def to(self, reciever):
+        if hasattr(reciever, "nick"):
+            self.arg(reciever.nick)
+        else:
+            self.arg(reciever)
     def arg(self, argument):
+        if self._args == None:
+            self._args = []
         try:
             self._args.append(str(argument))
         except:
             self._args.append("%s" % argument)
     def ToString(self):
         return ' '.join(self._args)
+    def ToPacket(self):
+        return "%s\r\n" % self.ToString()
 
 
 # parse incoming commands

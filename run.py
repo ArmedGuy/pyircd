@@ -7,7 +7,6 @@ logger.info("derp", True, False)
 daemon = daemons.NodeDaemon("0.0.0.0", 6667)
 daemon.start()
 
-
 """
 settings = {
     'host': "127.0.0.1",
@@ -23,6 +22,6 @@ standard.queueJoinChannels(["#Pie-Studios"])
 
 bot.connect()
 """
-    
+ 
 while True:
     time.sleep(1)
