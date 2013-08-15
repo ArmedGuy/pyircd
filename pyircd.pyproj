@@ -22,7 +22,7 @@
     <Compile Include="run.py" />
     <Compile Include="__init__.py" />
     <Compile Include="irc\channel.py" />
-    <Compile Include="irc\flags.py" />
+    <Compile Include="irc\modes.py" />
     <Compile Include="irc\user.py" />
     <Compile Include="irc\__init__.py" />
     <Compile Include="irc\handlers\login.py" />

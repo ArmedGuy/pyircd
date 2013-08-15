@@ -1,11 +1,16 @@
-import config, logger, daemons, time
+import config, logger, daemons, time, irc.channel
 from tests import pyircbot
 
 config.init()
 logger.init()
 logger.info("derp", True, False)
+"""
 daemon = daemons.NodeDaemon("0.0.0.0", 6667)
 daemon.start()
+"""
+c = irc.channel.Channel("#Pie-Studios")
+c.modes.handle("-nt+k+b password nick!user@host")
+
 
 """
 settings = {
