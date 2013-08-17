@@ -2,6 +2,7 @@ from network.commands.replies import *
 import config, sys
 class OnUserConnect():
     def __init__(self, daemon, user):
+        user.buffer(True)
         user.send(RPL_WELCOME(user).ToString())
         user.send(RPL_YOURHOST(user).ToString())
         user.send(RPL_CREATED(user).ToString())
@@ -20,6 +21,7 @@ class OnUserConnect():
         for line in config.motd:
             user.send(RPL_MOTD(user, line).ToString())
         user.send(RPL_ENDOFMOTD(user).ToString())
+        user.buffer(False)
 
         # set modes
 

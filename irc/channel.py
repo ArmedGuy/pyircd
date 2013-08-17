@@ -88,8 +88,8 @@ class Channel:
     isFull = property(_get_isFull)
 
     def send(self, message): # TODO: join/part hidden messages and such
+        c = message.ToCommand()
         for user in self.users:
-            c = message.ToCommand()
             if (not user.modes.match("d") or c.command not in ("NOTICE", "PRIVMSG")) and not (c.command in ("NOTICE", "PRIVMSG") and c.sender == user.hostmask):
                 user.send(message.ToString())
 

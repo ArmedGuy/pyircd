@@ -70,8 +70,10 @@ class UserCommandString:
             return
         i = 0
         for block in blocks:
-            if(block[0] == ":"):
-                self.args.append(" ".join(blocks[i:])[1:])
-            else:
-                self.args.append(block)
+            if len(block) != 0:
+                if block[0] == ":":
+                    self.args.append(" ".join(blocks[i:])[1:])
+                    break
+                else:
+                    self.args.append(block)
             i = i + 1

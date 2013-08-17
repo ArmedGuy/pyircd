@@ -1,8 +1,10 @@
-import re, flags, logger, config, irc.modes, network.commands.payloads, network.commands.replies
+import re, flags, logger, config, irc.modes, threading
+import network.commands.payloads, network.commands.replies
 
 username_regex = re.compile("/\A([a-z_\-\[\]\\^{}|`][a-z0-9_\-\[\]\\^{}|`]{2,15})\z/i")
 
 class User():
+    _userlock = None
     GUID = -1
     hostmask = ""
     
@@ -18,7 +20,11 @@ class User():
     channels = None
     
     _socket = None
+    _useBuffer = False
+    _buffer = ""
     def __init__(self, socket, nick, ident, hostname):
+        self._userlock = threading.Lock()
+
         self._socket = socket
         self.nick = nick
         self.ident = ident
@@ -30,11 +36,32 @@ class User():
 
         self.channels = [] # local channels = full object, global channels = network pointer
 
+    def buffer(self, use):
+        if use == False and self._useBuffer == True:
+            if self._buffer != "":
+                with self._userlock:
+                    self._socket.send(self._buffer)
+                    self._buffer = ""
+        else:
+            with self._userlock:
+                self._buffer = ""
+        self._useBuffer = use
+
     def send(self, data):
         if self._socket:
-            self._socket.send("%s\r\n" % data)
+            if self._useBuffer:
+                with self._userlock:
+                    print "buffer len: %d" % (len(self._buffer) + len(data))
+                    if len(self._buffer) + len(data) > 1024:
+                        self._socket.send(self._buffer)
+                        self._buffer = "%s\r\n" % data
+                    else:
+                        self._buffer = "%s%s\r\n" % (self._buffer, data)
+            else:
+                with self._userlock:
+                    self._socket.send("%s\r\n" % data)
             if hasattr(config, "debug"):
-                logger.debug(data, True, False)
+                logger.debug("[%s]: %s" % (self.nick, data), True, False)
 
 
     # channel management
@@ -52,6 +79,8 @@ class User():
             self.channels.append(channel)
 
             network.commands.payloads.OnJoinChannel(channel, self)
+
+            return True
         else:
             pass
 

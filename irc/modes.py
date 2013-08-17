@@ -239,6 +239,7 @@ class ChannelModes:
         if key in self._listmodes:
             with self._modelock:
                 return self._listmodes[key].remove(value)
+        return False
     # get and set vaules
     def setvalue(self, key, value):
         if key in self._valuemodes:
@@ -249,7 +250,7 @@ class ChannelModes:
             return False
 
     def getvalue(self, key):
-        if val in self._valuemodes:
+        if key in self._valuemodes:
             return self._valuemodes[key]
         else:
             return None

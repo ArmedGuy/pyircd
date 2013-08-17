@@ -26,6 +26,6 @@ class MsgHandler(irc.commandhandler.CommandHandler):
             # TODO: is there anything more to check?
 
             if cmd.command == "NOTICE":
-                c.send(network.commands.replies.RPL_NOTICE(handler.user.hostmask, u.nick, cmd.args[1]))
+                u.send(network.commands.replies.RPL_NOTICE(handler.user.hostmask, u.nick, cmd.args[1]).ToString())
             else:
-                c.send(network.commands.replies.RPL_PRIVMSG(handler.user.hostmask, u.nick, cmd.args[1]))
+                u.send(network.commands.replies.RPL_PRIVMSG(handler.user.hostmask, u.nick, cmd.args[1]).ToString())
