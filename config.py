@@ -40,7 +40,7 @@ support = {
     "MAXLIST": "beI:250",
     "CHANLIMIT": "#~:75",
     "CHANNELLEN": "50",
-    "CHANMODES": "beI,k,l,BCMNORScimnpstz",
+    "CHANMODES": "b,k,l,BCMNORScimnpstz",
     "SAFELIST": "",
     "FNC": "",
     "KNOCK": "",

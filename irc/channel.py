@@ -2,7 +2,7 @@ import irc.modes, config, network.commands.payloads, logger, time, threading
 class Channel:
     globalchannel = True # hashtag for global, ~ for local
     name = ""
-    topic = ""
+    topic = None
 
     created = 0
     users = None
@@ -31,7 +31,7 @@ class Channel:
 
         self._daemon.channels.append(self)
         self._chanlock = threading.Lock()
-        
+
     def update(self):
         if len(self.users) == 0 and not self.modes.match("r"):
             try:
@@ -89,7 +89,8 @@ class Channel:
 
     def send(self, message): # TODO: join/part hidden messages and such
         for user in self.users:
-            if not user.modes.match("d") or message.ToCommand().command not in ("NOTICE", "PRIVMSG"):
+            c = message.ToCommand()
+            if (not user.modes.match("d") or c.command not in ("NOTICE", "PRIVMSG")) and not (c.command in ("NOTICE", "PRIVMSG") and c.sender == user.hostmask):
                 user.send(message.ToString())
 
 

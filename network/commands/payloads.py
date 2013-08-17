@@ -39,7 +39,15 @@ class OnJoinChannel():
             user.send(RPL_NAMREPLY(user, type, channel.name, ulist).ToString())
         user.send(RPL_ENDOFNAMES(user, channel.name).ToString())
 
+        OnTopic(channel, user)
+
 class OnChannelMode():
     def __init__(self, channel, user):
         user.send(RPL_CHANNELMODEIS(user, channel.name, "+%s" % channel.modes.list(True)).ToString())
         user.send(RPL_CREATIONTIME(user, channel.name, channel.created).ToString())
+class OnTopic():
+    def __init__(self, channel, user):
+        if channel.topic != None:
+            user.send(RPL_TOPIC(user, channel.name, channel.topic[0]).ToString())
+            user.send(RPL_TOPICWHOTIME(user, channel.name, channel.topic[1], channel.topic[2]).ToString())
+        

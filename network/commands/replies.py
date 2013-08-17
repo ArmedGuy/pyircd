@@ -48,6 +48,13 @@ class RPL_QUIT(Command):
         self.arg("QUIT")
         self.arg(text(reason))
 
+class RPL_TOPICSET(Command):
+    def __init__(self, sender, channel, topic):
+        self.arg(":%s" % sender)
+        self.arg("TOPIC")
+        self.arg(channel)
+        self.arg(text(topic))
+
 # numeric commands sent by server
 
 class RPL_WELCOME(Command): #001
@@ -141,6 +148,28 @@ class RPL_CREATIONTIME(Command): #329
         self.arg(channel)
         self.arg(created)
 
+class RPL_NOTOPIC(Command): # 331
+    def __init__(self, user, channel):
+        self.initServerMessage("331")
+        self.to(user)
+        self.arg(channel)
+        self.arg(text("No topic is set"))
+
+class RPL_TOPIC(Command): #332
+    def __init__(self, user, channel, topic):
+        self.initServerMessage("332")
+        self.to(user)
+        self.arg(channel)
+        self.arg(text(topic))
+
+class RPL_TOPICWHOTIME(Command): #333
+    def __init__(self, user, channel, who, time):
+        self.initServerMessage("333")
+        self.to(user)
+        self.arg(channel)
+        self.arg(who)
+        self.arg(time)
+
 class RPL_NAMREPLY(Command): # 353
     def __init__(self, user, type, channel, users):
         self.initServerMessage("353")
@@ -155,6 +184,23 @@ class RPL_ENDOFNAMES(Command): # 366
         self.to(user)
         self.arg(channel)
         self.arg(text("End of /NAMES list"))
+
+class RPL_BANLIST(Command): # 367
+    def __init__(self, user, channel, banmask, nick, time):
+        self.initServerMessage("367")
+        self.to(user)
+        self.arg(channel)
+        self.arg(banmask)
+        self.arg(nick)
+        self.arg(time)
+
+class RPL_ENDOFBANLIST(Command): # 368
+    def __init__(self, user, channel):
+        self.initServerMessage("368")
+        self.to(user)
+        self.arg(channel)
+        self.arg(text("End of Channel Ban List"))
+
 class RPL_MOTD(Command): #372
     def __init__(self, user, line):
         self.initServerMessage("372")

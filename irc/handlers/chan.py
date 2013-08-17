@@ -1,4 +1,4 @@
-import irc.commandhandler, logger
+import irc.commandhandler, logger, config
 class JoinHandler(irc.commandhandler.CommandHandler):
     def __init__(self, daemon):
         self.handlesCommands = ["JOIN"]
@@ -8,7 +8,8 @@ class JoinHandler(irc.commandhandler.CommandHandler):
             return 0
         chan = self._daemon.channel(cmd.args[0])
         if handler.user.join(chan):
-            pass # user.join sends bad messages etc
+            if len(chan.users) == 1 and not chan.modes.match("r"):
+                chan.modes.set(config.servername, "+o %s" % handler.user.nick)
         else:
             pass
 

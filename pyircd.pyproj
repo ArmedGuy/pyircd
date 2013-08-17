@@ -17,10 +17,12 @@
   <ItemGroup>
     <Compile Include="config.py" />
     <Compile Include="daemons.py" />
-    <Compile Include="irc\handlers\commandhandler.py" />
+    <Compile Include="irc\commandhandler.py" />
     <Compile Include="irc\handlers\chan.py" />
     <Compile Include="irc\handlers\mode.py" />
+    <Compile Include="irc\handlers\msg.py" />
     <Compile Include="irc\handlers\ping.py" />
+    <Compile Include="irc\handlers\topic.py" />
     <Compile Include="logger.py" />
     <Compile Include="run.py" />
     <Compile Include="__init__.py" />

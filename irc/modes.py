@@ -2,8 +2,8 @@ user_modes = "CDFGNRSUWXabcdfgijklnopqrsuwxyz"
 channel_modes = "ACGHIKLNOQRSVabcefhiklmnopqrstuvz"
 channelmodes_with_params = "befIovahqlLk"
 
-import config, re, threading
-from network.commands.replies import RPL_MODE
+import config, re, threading, time
+from network.commands.replies import RPL_MODE, RPL_BANLIST, RPL_ENDOFBANLIST
 
 
 class ChannelModes:
@@ -17,7 +17,7 @@ class ChannelModes:
         self._modelock = threading.Lock()
         self._channel = channel
         self._listmodes = {
-            "b": ListMode("b", True), # ban includes
+            "b": BanListMode(), # ban includes
             "e": ListMode("e", True), # ban excludes
             "I": ListMode("I", True), # cant be invited
             "o": ListMode("o"), # channel op
@@ -113,72 +113,148 @@ class ChannelModes:
 
     def set(self, setter, modes):
         result = self.parse(modes)
+        set = []
+        set.append([])
+        set.append([])
+        origin = ""
+        if hasattr(setter, 'nick'):
+            origin = setter.nick
+        else:
+            origin = setter
         # add
         for add in result[0]:
             if len(add) != 2:
                 if self.hasAccess(setter, add):
-                    with self._modelock:
-                        self._flagmodes[add] = True
+                    res = self.addsingle(setter, add) 
+                    if(res == 0):
+                        set[0].append(add)
+                    if(res == 1):
+                        # not found, or is server while listing
+                        pass
+                    if (res == 2):
+                        break # is list
                 else:
                     pass # no access
             else:
-                if add[0] in self._listmodes:
-                    if self.hasAccess(setter, add[0]):
-                        with self._modelock:
-                            if self._listmodes[add[0]].add(add[1]):
-                                pass # successfully added to list
-                            else:
-                                pass # failed to add to list
-                        continue
+                if self.hasAccess(setter, add[0]):
+                    if(self.additem(setter, add[0], add[1])):
+                        set[0].append(add)
                     else:
-                        continue # no access
-
-                if add[0] in self._valuemodes:
-                    if self.hasAccess(setter, add[0]):
-                        with self._modelock:
-                            if self._valuemodes[add[0]].add(add[1]):
-                                pass # successfully added to list
-                            else:
-                                pass # failed to add to list
-                        continue
-                    else:
-                        continue # no access
+                        pass # not found or list is full
+                else:
+                    pass # no access
         # remove
         for rem in result[1]:
             if len(rem) != 2:
                 if self.hasAccess(setter, rem):
-                    with self._modelock:
-                        self._flagmodes[rem] = False
+                    if self.remsingle(setter, rem):
+                        set[1].append(rem)
+                    else:
+                        pass # failed to remove, noexistant
                 else:
                     pass # no access
             else:
-                if rem[0] in self._listmodes:
-                    if self.hasAccess(setter, rem[0]):
-                        with self._modelock:
-                            if self._listmodes[rem[0]].remove(rem[1]):
-                                pass # successfully removed from list
-                            else:
-                                pass # failed to add to listremove from list
-                        continue
+                if self.hasAccess(setter, rem[0]):
+                    if self.remitem(setter, rem[0], rem[1]):
+                        set[1].append(rem) # successfully removed from list
                     else:
-                        pass # no access
+                        pass # failed to add to listremove from list
+                    continue
+                else:
+                    pass # no access
 
-                if rem[0] in self._valuemodes:
-                    if self.hasAccess(setter, rem[0]):
-                        with self._modelock:
-                            if self._valuemodes[rem[0]].remove(rem[1]):
-                                pass # successfully removed from list
-                            else:
-                                pass # failed to remove from list
-                        continue
-                    else:
-                        pass
-    def getValue(self, val):
+        # send channel notice
+        setModes = ""
+        args = []
+        tmp = []
+        if len(set[0]) != 0:
+            for a in set[0]:
+                if len(a) == 2:
+                    tmp.append(a[0])
+                    args.append(a[1])
+                else:
+                    tmp.append(a)
+            setModes = "+%s" % "".join(tmp)
+            tmp = []
+        if len(set[1]) != 0:
+            for r in set[1]:
+                if len(r) == 2:
+                    tmp.append(r[0])
+                    args.append(r[1])
+                else:
+                    tmp.append(a)
+            setModes = "%s-%s" % (setModes, "".join(tmp))
+        if setModes != "":
+            setModes = "%s %s" % (setModes, " ".join(args))
+            if hasattr(setter, 'hostmask'):
+                self._channel.send(RPL_MODE(setter.hostmask, self._channel.name, setModes))
+            else:
+                self._channel.send(RPL_MODE(setter, self._channel.name, setModes))
+    
+    # add stuff
+    def addsingle(self, setter, key): # + version
+        if key in self._listmodes:
+            if key in "b" and hasattr(setter, 'nick'):
+                for i in self._listmodes["b"].list():
+                    setter.send(RPL_BANLIST(setter, self._channel.name, i[0], i[1], i[2]).ToString())
+                setter.send(RPL_ENDOFBANLIST(setter, self._channel.name).ToString())
+                return 2
+            else:
+                return 1
+        if key in self._flagmodes:
+            with self._modelock:
+                self._flagmodes[key] = True
+            return 0
+        else:
+            return 1
+
+    def additem(self, setter, key, value):
+        origin = ""
+        if hasattr(setter, 'nick'):
+            origin = setter.nick
+        else:
+            origin = setter
+        if key in self._listmodes:
+            with self._modelock:
+                if key in "b":
+                    return self._listmodes[key].add(value, origin)
+                else:
+                    return self._listmodes[key].add(value)
+        else:
+            return self.setvalue(key, value)
+
+    # remove stuff
+    def remsingle(self, setter, key):
+        if key in self._flagmodes:
+            with self._modelock:
+                self._flagmodes[key] = False
+            return True
+        if key in self._valuemodes:
+            with self._modelock:
+                self._valuemodes[key].default()
+            return True
+        return False
+
+    def remitem(self, setter, key, value):
+        if key in self._listmodes:
+            with self._modelock:
+                return self._listmodes[key].remove(value)
+    # get and set vaules
+    def setvalue(self, key, value):
+        if key in self._valuemodes:
+            with self._modelock:
+                self._valuemodes[key] = value
+            return True
+        else:
+            return False
+
+    def getvalue(self, key):
         if val in self._valuemodes:
-            return self._valuemodes[val]
+            return self._valuemodes[key]
         else:
             return None
     
+    # parse modes
     def parse(self, raw):
         data = raw.split(" ")
         add = True
@@ -193,11 +269,13 @@ class ChannelModes:
                 add = False
                 continue
             if add == True:
-                if c in self._valuemodes or c in self._listmodes:
+                if (c in self._valuemodes or c in self._listmodes) and len(data) > 1:
                     addlist.append((c, data[i+1]))
                     i = i + 1
                 else:
                     addlist.append(c)
+                    if c in self._listmodes:
+                        break
             else:
                 if c in self._valuemodes or c in self._listmodes:
                     removelist.append((c, data[i+1]))
@@ -377,6 +455,9 @@ class ValueMode:
     def match(self, match):
         return (self._value == match)
     
+    def default(self):
+        self._value = self._defValue
+    
     def isset(self):
         return (self._value != self._defValue)
 
@@ -425,4 +506,33 @@ class ListMode: #
                 if litem[1].match(subject) != None:
                     return True
             return False
+    def list(self):
+        tmp = []
+        if not self._useRegex:
+            return list
+        else:
+            for i in self._list:
+                tmp.append(i[0])
+            return tmp
 
+class BanListMode(ListMode):
+    _banListInfo = {}
+    def __init__(self):
+        self._banListInfo = {}
+        ListMode.__init__(self, 'b', True)
+
+    def add(self, item, nick):
+        self._banListInfo[item] = (nick, int(time.time()))
+        return ListMode.add(self, item)
+    def remove(self, item):
+        try:
+            self._banListInfo.pop(item)
+        except:
+            pass
+        return ListMode.remove(self, item)
+
+    def list(self):
+        tmp = []
+        for key in self._banListInfo.keys():
+            tmp.append((key, self._banListInfo[key][0], self._banListInfo[key][1]))
+        return tmp
