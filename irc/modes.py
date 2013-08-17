@@ -1,15 +1,20 @@
 user_modes = "CDFGNRSUWXabcdfgijklnopqrsuwxyz"
-channel_modes = "BIMNORSabcehiklmnopqstvz"
+channel_modes = "ACGHIKLNOQRSVabcefhiklmnopqrstuvz"
+channelmodes_with_params = "befIovahqlLk"
 
-import config, re
+import config, re, threading
+from network.commands.replies import RPL_MODE
 
 
 class ChannelModes:
+    _modelock = None
     _channel = ""
-    _listmodes = None
-    _valuemodes = None
-    _flagmodes = None
+    _listmodes = {}
+    _valuemodes = {}
+    _flagmodes = {}
+
     def __init__(self, channel):
+        self._modelock = threading.Lock()
         self._channel = channel
         self._listmodes = {
             "b": ListMode("b", True), # ban includes
@@ -23,9 +28,10 @@ class ChannelModes:
         }
 
         self._valuemodes = {
-            "l": ValueMode("l", 75), # max users in channel
+            "l": ValueMode("l", None), # max users in channel
             "L": ValueMode("L", None), # overflow channel
-            "k": ValueMode("k", None) # passworded channel
+            "k": ValueMode("k", None), # passworded channel
+            "f": ValueMode("f", None) # against floods
         }
 
         self._flagmodes = {
@@ -33,6 +39,7 @@ class ChannelModes:
             "s": False, # secret channel
             "i": False, # invite only channel
             "m": False, # moderated, only qaohv can talk
+            "M": False, # reg-moderated, only +r's can talk
             "n": False, # No outside channel messages
             "t": False, # only chanops may set topic
             "r": False, # chan is registered
@@ -47,27 +54,131 @@ class ChannelModes:
             "G": False, # G rated channel
             "u": False, # /names /who only shows @'s
             "C": False, # no CTCPs allowed
-            "S": False, # TLS peeps only
-            "z": False, # persistant channel
+            "z": False, # TLS peeps
             "Q": False  # peace mode, no kicks except U:Lines, bans can be made
         }
+    def modes(self): # temporary
+        modes = []
+        for m in self._listmodes:
+            modes.append(m)
+        for m in self._flagmodes:
+            modes.append(m)
+        for m in self._valuemodes:
+            modes.append(m)
+        modes.sort()
+        return "".join(modes)
 
-    def handle(self, modes):
+    def list(self, forCmd=False):
+        keys = []
+        for k in self._flagmodes.keys():
+            if self._flagmodes[k] == True:
+                keys.append(k)
+        if not forCmd:
+            for k in self._valuemodes.keys():
+                if self._valuemodes[k].isset():
+                    keys.append(k)
+        return "".join(keys)
+
+    def match(self, mode, match=""):
+        if mode in self._flagmodes:
+            return self._flagmodes[mode]
+        if mode in self._valuemodes:
+            return self._valuemodes[mode].match(match)
+        if mode in self._listmodes:
+            return self._listmodes[mode].match(match)
+
+    def matchany(self, modes, matches=None):
+        i = 0
+        for mode in modes:
+            if mode in channelmodes_with_params:
+                if matches != None and self.match(mode, matches[i]):
+                    return True
+                i = i + 1
+            else:
+                if self.match(mode):
+                    return True
+        return False
+
+    def matchall(self, modes, matches=None):
+        i = 0
+        for mode in modes:
+            if mode in channelmodes_with_params:
+                if matches != None and not self.match(mode, matches[i]):
+                    return False
+                i = i + 1
+            else:
+                if not self.match(mode):
+                    return False
+        return True
+
+    def set(self, setter, modes):
         result = self.parse(modes)
-        print "add"
-        for v in result[0]:
-            if len(v) == 2:
-                print "%s = %s" % (v)
+        # add
+        for add in result[0]:
+            if len(add) != 2:
+                if self.hasAccess(setter, add):
+                    with self._modelock:
+                        self._flagmodes[add] = True
+                else:
+                    pass # no access
             else:
-                print v
+                if add[0] in self._listmodes:
+                    if self.hasAccess(setter, add[0]):
+                        with self._modelock:
+                            if self._listmodes[add[0]].add(add[1]):
+                                pass # successfully added to list
+                            else:
+                                pass # failed to add to list
+                        continue
+                    else:
+                        continue # no access
 
-        print "remove"
-        for v in result[1]:
-            if len(v) == 2:
-                print "%s = %s" % (v)
+                if add[0] in self._valuemodes:
+                    if self.hasAccess(setter, add[0]):
+                        with self._modelock:
+                            if self._valuemodes[add[0]].add(add[1]):
+                                pass # successfully added to list
+                            else:
+                                pass # failed to add to list
+                        continue
+                    else:
+                        continue # no access
+        # remove
+        for rem in result[1]:
+            if len(rem) != 2:
+                if self.hasAccess(setter, rem):
+                    with self._modelock:
+                        self._flagmodes[rem] = False
+                else:
+                    pass # no access
             else:
-                print v
+                if rem[0] in self._listmodes:
+                    if self.hasAccess(setter, rem[0]):
+                        with self._modelock:
+                            if self._listmodes[rem[0]].remove(rem[1]):
+                                pass # successfully removed from list
+                            else:
+                                pass # failed to add to listremove from list
+                        continue
+                    else:
+                        pass # no access
 
+                if rem[0] in self._valuemodes:
+                    if self.hasAccess(setter, rem[0]):
+                        with self._modelock:
+                            if self._valuemodes[rem[0]].remove(rem[1]):
+                                pass # successfully removed from list
+                            else:
+                                pass # failed to remove from list
+                        continue
+                    else:
+                        pass
+    def getValue(self, val):
+        if val in self._valuemodes:
+            return self._valuemodes[val]
+        else:
+            return None
+    
     def parse(self, raw):
         data = raw.split(" ")
         add = True
@@ -97,12 +208,164 @@ class ChannelModes:
                 break
         return (addlist, removelist)
 
+    def hasAccess(self, setter, mode):
+        if hasattr(setter, 'nick'):
+            # stuff opers and services can set
+            user = setter
+
+            if mode in "AOr-aLqu-cCfGhKlMNopQRsVHz-beiIkmntv" and user.modes.matchany("So"):
+                return True
+
+            # stuff owner can set
+            if mode in "aLqu-cCfGhKlMNopQRsVHz-beiIkmntv" and self.match("q", (user.nick)):
+                return True
+
+            # stuff a and o can set
+            if mode in "cCfGhKlMNopQRsVHz-beiIkmntv" and self.matchany("ao", (user.nick, user.nick)):
+                return True
+
+            # stuff half-op can set
+            if mode in "beiIkmntv" and self.match("h", (user.nick)):
+                return True
+            return False
+        else:  # for now, no nick = es server
+            return True
+
+class UserModes:
+    _modelock = None
+    _modes = None
+
+    _opermodes = None
+    _user = None
+    def __init__(self, user):
+        self._modelock = threading.Lock()
+        self._user = user
+        self._modes = {
+            "O": False, # local IRC Op
+            "o": False, # global IRC op
+            "i": False, # invisible
+            "w": False, # can read wallop messages
+            "g": False, # can read/sen to globops and locops
+            "h": False, # available for help
+            "s": False, # can see server notices
+            "k": False, # can see all the kills which were executed
+            "S": False, # for services, protects them
+            "a": False, # is a services admin
+            "A": False, # is a server admin
+            "N": False, # is a network admin
+            "T": False, # is a tech admin
+            "C": False, # is a Co-Admin
+            "c": False, # see all connects/disconnects on local server
+            "f": False, # listen to flood alerts from server
+            "r": False, # nickname registered
+            "x": False, # hides hostname
+            "e": False, # can listen to server messages sent to +e users
+            "b": False, # can read and sent to chatops
+            "W": False, # (IRCops only) lets you see when people whois you
+            "q": False, # (services admins only) Only U:lines can lick you
+            "B": False, # bot marker
+            "F": False, # lets you recieve far connect notices and local notices
+            "I": False, # makes you invisible in channels
+            "H": False, # hide IRCop status in who and whois
+            "d": False, # deaf, cant recieve channel messages
+            "t": False, # says you are using a vhost
+            "G": False, # G-rated client, filters out bad words
+            "z": False, # Marks the client as being on secure connection
+        }
+    def set(self, setter, modes):
+        result = self.parse(modes)
+        set = []
+        set.append([])
+        set.append([])
+        # add
+        for add in result[0]:
+            if self.hasAccess(setter, add):
+                with self._modelock:
+                    self._modes[add] = True
+                set[0].append(add)
+            else:
+                pass # no access
+        for rem in result[1]:
+            if self.hasAccess(setter, rem):
+                with self._modelock:
+                    self._modes[rem] = False
+                set[1].append(rem)
+            else:
+                pass # no access
+
+        # compile message to send to user
+        setModes = ""
+        if len(set[0]) > 0:
+            setModes = "+%s" % "".join(set[0])
+        if len(set[1]) > 0:
+            setModes = "%s-%s" % (setModes, "".join(set[0]))
+
+        if hasattr(setter, 'hostmask'):
+            self._user.send(RPL_MODE(setter.hostmask, self._user.nick, setModes).ToString())
+        else:
+            self._user.send(RPL_MODE(setter, self._user.nick, setModes).ToString())
+
+    def parse(self, raw):
+        add = True
+        addlist = []
+        removelist = []
+        for c in raw:
+            if c == "+":
+                add = True
+                continue
+            if c == "-":
+                add = False
+                continue
+            if add == True:
+                addlist.append(c)
+            else:
+                removelist.append(c)
+        return (addlist, removelist)
+
+    def match(self, mode):
+        try:
+            return self._modes[mode]
+        except:
+            return False
+
+    def matchall(self, modes):
+        for m in modes:
+            if not self.match(m):
+                return False
+        return True
+
+    def matchany(self, modes):
+        for m in modes:
+            if self.match(m):
+                return True
+        return False
+
+    def list(self):
+        keys = []
+        for key in self._modes.keys():
+            if self._modes[key] == True:
+                keys.append(key)
+        return "".join(keys)
+
+    def hasAccess(self, setter, mode): # TODO: fix this, properly
+        return True # for now
+
+        if hasattr(setter, 'nick'):
+            if mode in "OowghskSaANTCcfrxebWqBFIHtGz" and setter.modes.matchany("oS"):
+                pass
+        else: # for now, a server
+            return True
+
+
+
 
 class ValueMode:
     _type = ""
     _value = None
+    _defValue = None
     def __init__(self, type, defaultValue):
         self._type = type
+        self._defValue = defaultValue
         self.set(defaultValue)
 
     def get(self):
@@ -110,6 +373,12 @@ class ValueMode:
     
     def set(self, value):
         self._value = value
+
+    def match(self, match):
+        return (self._value == match)
+    
+    def isset(self):
+        return (self._value != self._defValue)
 
 class ListMode: # 
     _list = None

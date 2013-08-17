@@ -21,6 +21,7 @@ class NickHandler(irc.commandhandler.CommandHandler):
                 )
                 handler.user.real_hostname = host[1]
                 handler.user.realname = handler.cache["user-auth-data"][1]
+                handler.daemon.users.append(handler.user)
                 network.commands.payloads.OnUserConnect(self._daemon, handler.user)
             else:
                 handler.cache["nick-auth-data"] = cmd.args[0]
@@ -43,6 +44,19 @@ class UserHandler(irc.commandhandler.CommandHandler):
             )
             handler.user.real_hostname = host[1]
             handler.user.realname = cmd.args[3]
+            handler.daemon.users.append(handler.user)
             network.commands.payloads.OnUserConnect(self._daemon, handler.user)
         else:
             handler.cache["user-auth-data"] = (cmd.args[0], cmd.args[3])
+
+class QuitHandler(irc.commandhandler.CommandHandler):
+    def __init__(self, daemon):
+        self.handlesCommands = ["QUIT"]
+        self._daemon = daemon
+    def handle(self, handler, cmd):
+        if handler.user:
+            if len(cmd.args) == 1:
+                handler.user.quit(cmd.args[0])
+            else:
+                handler.user.quit()
+            handler.terminate()

@@ -33,6 +33,8 @@ class IrcConnectionHandler(SocketServer.BaseRequestHandler):
                             self.process(pck)
             except socket.error:
                 self.alive = False
+                if self.user:
+                    self.user.quit("Connection reset by peer")
             """
             except:
                 for var in sys.exc_info():
@@ -49,4 +51,13 @@ class IrcConnectionHandler(SocketServer.BaseRequestHandler):
             self.request.close()
             return
         self.daemon.delegateRequest(self, cmd)
+
+    def terminate(self):
+        if self.user:
+            try:
+                self.daemon.users.remove(self.user)
+            except:
+                pass
+            self.user = None
+        self.request.close()
         

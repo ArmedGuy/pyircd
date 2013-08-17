@@ -1,4 +1,4 @@
-import network.handlers, network.servers, config, threading, irc.handlers
+import network.handlers, network.servers, config, threading, irc.handlers, logger
 
 class Daemon:
     serverName = ""
@@ -35,6 +35,7 @@ class MasterDaemon(Daemon):
         
 class NodeDaemon(Daemon):
     netstats = None
+    _isMasterConnected = False
     def __init__(self, host, port):
 
         self._commandHandlers = irc.handlers.getHandlers(self)
@@ -67,5 +68,45 @@ class NodeDaemon(Daemon):
         for hnd in self._commandHandlers:
             if cmd.command in hnd.handlesCommands:
                 hnd.handle(handler, cmd)
+
+    def erase(self, user):
+        for c in user.channels:
+            try:
+                c.remove(user)
+            except:
+                pass
+            try:
+                user.channels.remove(c)
+            except:
+                pass
+
+        try:
+            self.users.remove(user)
+        except:
+            pass
+
+
+    # user management
+    def user(self, name):
+        for u in self.users:
+            if u.nick == name:
+                return u
+        return None
+    # channel management
+    def channel(self, name, makeNew=True): # get or create a channel
+        if name[0] == "~":
+            for c in self.channels:
+                if c.name == name:
+                    return c
+            if makeNew:
+                c = irc.channel.Channel(self, name)
+                return c
+            else:
+                return False
+        else:
+            if self._isMasterConnected:
+                pass # todo
+            else:
+                return False
         
         

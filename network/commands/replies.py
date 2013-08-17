@@ -10,8 +10,6 @@ class RPL_PONG(Command):
 
 class RPL_NOTICE(Command):
     def __init__(self, sender, reciever, msg):
-        if sender[0] == ":":
-            sender = sender[1:]
         self.arg(":%s" % sender)
         self.arg("NOTICE")
         self.to(reciever)
@@ -25,11 +23,30 @@ class RPL_PRIVMSG(Command):
         self.arg(text(msg))
 
 class RPL_MODE(Command):
-    def __init__(self, user, modes):
-        self.arg(":%s" % user.hostmask) # not the only possibility
+    def __init__(self, sender, reciever, modes):
+        self.arg(":%s" % sender)
         self.arg("MODE")
-        self.arg(user.name)
+        self.arg(reciever)
         self.arg(text(modes))
+
+class RPL_JOIN(Command):
+    def __init__(self, sender, chan):
+        self.arg(":%s" % sender)
+        self.arg("JOIN")
+        self.arg(chan)
+
+class RPL_PART(Command):
+    def __init__(self, sender, chan, msg="Leaving"):
+        self.arg(":%s" % sender)
+        self.arg("PART")
+        self.arg(chan)
+        self.arg(text(msg))
+
+class RPL_QUIT(Command):
+    def __init__(self, sender, reason="Leaving"):
+        self.arg(":%s" % sender)
+        self.arg("QUIT")
+        self.arg(text(reason))
 
 # numeric commands sent by server
 
@@ -109,6 +126,35 @@ class RPL_GLOBALUSERS(Command): #266
         self.arg(daemon.netstats.globalmaxclients)
         self.arg(text("Current global users %d, max %d" % (daemon.netstats.globalusers, daemon.netstats.globalmaxclients) ))
 
+
+class RPL_CHANNELMODEIS(Command): #324
+    def __init__(self, user, channel, modes):
+        self.initServerMessage("324")
+        self.to(user)
+        self.arg(channel)
+        self.arg(modes)
+
+class RPL_CREATIONTIME(Command): #329
+    def __init__(self, user, channel, created):
+        self.initServerMessage("329")
+        self.to(user)
+        self.arg(channel)
+        self.arg(created)
+
+class RPL_NAMREPLY(Command): # 353
+    def __init__(self, user, type, channel, users):
+        self.initServerMessage("353")
+        self.to(user)
+        self.arg(type)
+        self.arg(channel)
+        self.arg(text(users))
+
+class RPL_ENDOFNAMES(Command): # 366
+    def __init__(self, user, channel):
+        self.initServerMessage("366")
+        self.to(user)
+        self.arg(channel)
+        self.arg(text("End of /NAMES list"))
 class RPL_MOTD(Command): #372
     def __init__(self, user, line):
         self.initServerMessage("372")

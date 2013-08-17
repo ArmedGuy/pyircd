@@ -1,21 +1,24 @@
 log_file = None
-import config, datetime
+write_lock = None
+import config, datetime, threading
 def init():
-    global log_file
+    global log_file, write_lock
     log_file = open(config.log_file, 'a')
+    write_lock = threading.Lock()
     
 def write(data, toConsole=True, toFile=True):
     date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M")
     data = "[%s]%s" % (date,data)
-    if log_file != None:
-        if toConsole: 
-            print "%s" % data
-        if toFile: 
-            log_file.write("%s\n" % data)
-    else:
-        if toConsole:
-            print "%s" % data
-        print "Logfile not initialized!"
+    with write_lock:
+        if log_file != None:
+            if toConsole: 
+                print "%s" % data
+            if toFile: 
+                log_file.write("%s\n" % data)
+        else:
+            if toConsole:
+                print "%s" % data
+            print "Logfile not initialized!"
 
 def debug(data, toConsole=True, toFile=True):
     write("[DEBUG]: %s" % data)

@@ -37,10 +37,14 @@ class Command:
             self._args.append(str(argument))
         except:
             self._args.append("%s" % argument)
+
+    # ToStuff
     def ToString(self):
         return ' '.join(self._args)
     def ToPacket(self):
         return "%s\r\n" % self.ToString()
+    def ToCommand(self):
+        return UserCommandString(self.ToString())
 
 
 # parse incoming commands

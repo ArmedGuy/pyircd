@@ -1,7 +1,11 @@
-import ping, login
+import ping, session, chan, mode
 def getHandlers(daemon):
     return [
-            login.NickHandler(daemon),
-            login.UserHandler(daemon),
-            ping.PingHandler(daemon)
+            session.NickHandler(daemon),
+            session.UserHandler(daemon),
+            session.QuitHandler(daemon),
+            ping.PingHandler(daemon),
+            chan.JoinHandler(daemon),
+            chan.PartHandler(daemon),
+            mode.ModeHandler(daemon)
     ]

@@ -17,6 +17,9 @@
   <ItemGroup>
     <Compile Include="config.py" />
     <Compile Include="daemons.py" />
+    <Compile Include="irc\handlers\commandhandler.py" />
+    <Compile Include="irc\handlers\chan.py" />
+    <Compile Include="irc\handlers\mode.py" />
     <Compile Include="irc\handlers\ping.py" />
     <Compile Include="logger.py" />
     <Compile Include="run.py" />
@@ -25,7 +28,7 @@
     <Compile Include="irc\modes.py" />
     <Compile Include="irc\user.py" />
     <Compile Include="irc\__init__.py" />
-    <Compile Include="irc\handlers\login.py" />
+    <Compile Include="irc\handlers\session.py" />
     <Compile Include="irc\handlers\__init__.py" />
     <Compile Include="network\handlers.py" />
     <Compile Include="network\servers.py" />
