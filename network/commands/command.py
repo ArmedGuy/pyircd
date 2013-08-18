@@ -22,7 +22,7 @@ class Command:
     _args = None
     def __init__():
         self._args = []
-    def initServerMessage(self, cmd):
+    def init(self, cmd):
         self.arg(hostname())
         self.arg(cmd)
     def to(self, reciever):
@@ -39,12 +39,14 @@ class Command:
             self._args.append("%s" % argument)
 
     # ToStuff
+    def __str__(self):
+        return self.ToString()
     def ToString(self):
         return ' '.join(self._args)
     def ToPacket(self):
-        return "%s\r\n" % self.ToString()
+        return "%s\r\n" % self
     def ToCommand(self):
-        return UserCommandString(self.ToString())
+        return UserCommandString(self)
 
 
 # parse incoming commands

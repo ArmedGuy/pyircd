@@ -51,7 +51,6 @@ class User():
         if self._socket:
             if self._useBuffer:
                 with self._userlock:
-                    print "buffer len: %d" % (len(self._buffer) + len(data))
                     if len(self._buffer) + len(data) > 1024:
                         self._socket.send(self._buffer)
                         self._buffer = "%s\r\n" % data

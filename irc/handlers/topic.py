@@ -1,4 +1,4 @@
-import irc.commandhandler, network.commands.payloads, network.commands.replies, time
+import irc.commandhandler, network.commands.payloads, network.commands.replies, network.commands.events, time
 class TopicHandler(irc.commandhandler.CommandHandler):
     def __init__(self, daemon):
         self.handlesCommands = ["TOPIC"]
@@ -16,12 +16,12 @@ class TopicHandler(irc.commandhandler.CommandHandler):
             if c.modes.match("t"):
                 if c.modes.matchany("hoaq", (n, n, n, n) ):
                     c.topic = (cmd.args[1], n, int(time.time()))
-                    c.send(network.commands.replies.RPL_TOPICSET(handler.user.hostmask, c.name, cmd.args[1]))
+                    c.send(network.commands.events.TOPIC(handler.user.hostmask, c.name, cmd.args[1]))
                 else:
                     return 0 # no access
             else:
                 c.topic = (cmd.args[1], n, int(time.time()))
-                c.send(network.commands.replies.RPL_TOPICSET(handler.user.hostmask, c.name, cmd.args[1]))
+                c.send(network.commands.events.TOPIC(handler.user.hostmask, c.name, cmd.args[1]))
         else:
             if c.topic != None:
                 network.commands.payloads.OnTopic(c, handler.user)

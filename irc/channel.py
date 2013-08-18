@@ -91,6 +91,7 @@ class Channel:
         c = message.ToCommand()
         for user in self.users:
             if (not user.modes.match("d") or c.command not in ("NOTICE", "PRIVMSG")) and not (c.command in ("NOTICE", "PRIVMSG") and c.sender == user.hostmask):
-                user.send(message.ToString())
+                user.send(message)
+        del c
 
 

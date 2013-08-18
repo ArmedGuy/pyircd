@@ -1,5 +1,5 @@
 import network.commands, network.handlers, network.servers, socket, time, md5, config
-from network.commands.replies import RPL_NOTICE
+from network.commands.events import NOTICE
 def generateUserHostname(ip):
     if "." in ip:
         parts = ip.split(".")
@@ -18,10 +18,10 @@ def getUserHostname(con): #TODO: mask part of the hostname
     try:
         ip = con.getpeername()[0]
 
-        con.send(RPL_NOTICE(config.servername, "AUTH", "*** Looking up hostname").ToPacket())
+        con.send(NOTICE(config.servername, "AUTH", "*** Looking up hostname").ToPacket())
         h = socket.gethostbyaddr(ip)
         socket.setdefaulttimeout(time)
-        con.send(RPL_NOTICE(config.servername, "AUTH", "*** Found your hostname").ToPacket())
+        con.send(NOTICE(config.servername, "AUTH", "*** Found your hostname").ToPacket())
         real_hostname = h[0]
         hostname = real_hostname
         if "." in real_hostname:
@@ -36,12 +36,12 @@ def getUserHostname(con): #TODO: mask part of the hostname
 
     except:
         socket.setdefaulttimeout(time)
-        con.send(RPL_NOTICE(config.servername, "AUTH", "*** Hostname not found").ToPacket())
+        con.send(NOTICE(config.servername, "AUTH", "*** Hostname not found").ToPacket())
         hostname = generateUserHostname(ip)
         real_hostname = ip
 
     finally:
-        con.send(RPL_NOTICE(config.servername, "AUTH", "*** Your hostname is masked (%s)" % real_hostname).ToPacket())
+        con.send(NOTICE(config.servername, "AUTH", "*** Your hostname is masked (%s)" % real_hostname).ToPacket())
         return (hostname,real_hostname)
 
 

@@ -3,7 +3,7 @@ channel_modes = "ACGHIKLNOQRSVabcefhiklmnopqrstuvz"
 channelmodes_with_params = "befIovahqlLk"
 
 import config, re, threading, time
-from network.commands.replies import RPL_MODE, RPL_BANLIST, RPL_ENDOFBANLIST
+import network.commands.replies, network.commands.events
 
 
 class ChannelModes:
@@ -187,17 +187,17 @@ class ChannelModes:
         if setModes != "":
             setModes = "%s %s" % (setModes, " ".join(args))
             if hasattr(setter, 'hostmask'):
-                self._channel.send(RPL_MODE(setter.hostmask, self._channel.name, setModes))
+                self._channel.send(network.commands.events.MODE(setter.hostmask, self._channel.name, setModes))
             else:
-                self._channel.send(RPL_MODE(setter, self._channel.name, setModes))
+                self._channel.send(network.commands.events.MODE(setter, self._channel.name, setModes))
     
     # add stuff
     def addsingle(self, setter, key): # + version
         if key in self._listmodes:
-            if key in "b" and hasattr(setter, 'nick'):
+            if key in "b":
                 for i in self._listmodes["b"].list():
-                    setter.send(RPL_BANLIST(setter, self._channel.name, i[0], i[1], i[2]).ToString())
-                setter.send(RPL_ENDOFBANLIST(setter, self._channel.name).ToString())
+                    setter.send(network.commands.replies.RPL_BANLIST(setter, self._channel.name, i[0], i[1], i[2]))
+                setter.send(network.commands.replies.RPL_ENDOFBANLIST(setter, self._channel.name))
                 return 2
             else:
                 return 1
@@ -380,9 +380,9 @@ class UserModes:
             setModes = "%s-%s" % (setModes, "".join(set[0]))
 
         if hasattr(setter, 'hostmask'):
-            self._user.send(RPL_MODE(setter.hostmask, self._user.nick, setModes).ToString())
+            self._user.send(network.commands.events.MODE(setter.hostmask, self._user.nick, setModes))
         else:
-            self._user.send(RPL_MODE(setter, self._user.nick, setModes).ToString())
+            self._user.send(network.commands.events.MODE(setter, self._user.nick, setModes))
 
     def parse(self, raw):
         add = True

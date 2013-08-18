@@ -1,4 +1,5 @@
 import irc.commandhandler, network.commands.payloads
+from network.commands.errors import *
 class ModeHandler(irc.commandhandler.CommandHandler):
     def __init__(self, daemon):
         self.handlesCommands = ["MODE"]
@@ -16,9 +17,10 @@ class ModeHandler(irc.commandhandler.CommandHandler):
             else: # user
                 u = self._daemon.user(target)
                 if not u:
-                    return 0
+                    return 1
                 if not handler.user.modes.matchany("oO") and (u != handler.user):
-                    return 0 # can only mode own user
+                    handler.user.send(ERR_USERSDONTMATCH(handler.user))
+                    return 1 # can only mode own user
                 u.modes.set(handler.user, " ".join(cmd.args))
         else:
             if len(cmd.args) == 1:
@@ -35,4 +37,7 @@ class ModeHandler(irc.commandhandler.CommandHandler):
                     if not handler.user.modes.matchany("oO") and (u != handler.user):
                         return 0 # can only mode own user
                     u.modes.set(handler.user, " ".join(cmd.args))"""
+            else:
+                handler.user.send(ERR_NEEDMOREPARAMS(handler.user, "MODE"))
+                return 1
 
