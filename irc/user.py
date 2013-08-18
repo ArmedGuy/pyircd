@@ -65,21 +65,36 @@ class User():
 
     # channel management
     def join(self, channel, key=""): # attempt joining a channel
+        """ 
+        returns: 
+        0 = joined successfully
+        1 = error joining
+        2 = channel is full
+        3 = bad key
+        4 = is banned
+        5 = invite only
+        """
         if channel.globalchannel == False:
+            if "i" in channel.modes.list():
+                return 5
             if "k" in channel.modes.list():
                 if not channel.modes.match("k", key):
-                    return False # send wrong password message
+                    return 3 # send wrong password message
             if channel.isFull:
-                return False # send channel full message, and redirect if set
+                return 2 # send channel full message, and redirect if set
 
             # TODO: check if banned etc
+            if channel.modes.match("b", self.hostmask):
+                if not channel.modes.match("e", self.hostmask):
+                    return 4
+            
             channel.users.append(self)
 
             self.channels.append(channel)
 
             network.commands.payloads.OnJoinChannel(channel, self)
 
-            return True
+            return 0
         else:
             pass
 

@@ -9,10 +9,19 @@ class JoinHandler(irc.commandhandler.CommandHandler):
             handler.user.send(ERR_NEEDMOREPARAMS(handler.user, "JOIN"))
             return 1
         chan = self._daemon.channel(cmd.args[0])
-        if handler.user.join(chan):
+        result = handler.user.join(chan)
+        if result == 0:
             if len(chan.users) == 1 and not chan.modes.match("r"):
                 chan.modes.set(config.servername, "+o %s" % handler.user.nick)
-        else:
+        elif result == 1: # unknown error
+            pass
+        elif result == 2: # chan full
+            pass
+        elif result == 3: # wrong key
+            pass
+        elif result == 4: # banned
+            pass
+        elif result == 5: # invite only channel
             pass
 
 class PartHandler(irc.commandhandler.CommandHandler):
@@ -26,7 +35,8 @@ class PartHandler(irc.commandhandler.CommandHandler):
             return 1
         chan = self._daemon.channel(cmd.args[0], False)
         if not chan:
-            return 0
+            handler.user.send(ERR_NOSUCHCHANNEL(handler.user, cmd.args[0]))
+            return 1
         else:
             if len(cmd.args) == 2:
                 handler.user.part(chan, cmd.args[1])
