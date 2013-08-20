@@ -1,5 +1,5 @@
 import re, flags, logger, config, irc.modes, threading
-import network.commands.payloads, network.commands.replies
+import network.commands.payloads, network.commands.replies, network.commands.events
 
 username_regex = re.compile("/\A([a-z_\-\[\]\\^{}|`][a-z0-9_\-\[\]\\^{}|`]{2,15})\z/i")
 
@@ -78,7 +78,9 @@ class User():
             if "i" in channel.modes.list():
                 return 5
             if "k" in channel.modes.list():
+                print "trying to match %s" % key
                 if not channel.modes.match("k", key):
+                    print "no match for %s" % key
                     return 3 # send wrong password message
             if channel.isFull:
                 return 2 # send channel full message, and redirect if set
@@ -104,7 +106,7 @@ class User():
                 return False # user not even in channel, duh
 
             if isParting:
-                channel.send(network.commands.replies.RPL_PART(self.hostmask, channel.name, reason))
+                channel.send(network.commands.events.PART(self.hostmask, channel.name, reason))
             try:
                 channel.users.remove(self)
                 self.channels.remove(channel)
@@ -115,7 +117,7 @@ class User():
             pass
 
     def quit(self, reason="Leaving"):
-        qp = network.commands.replies.RPL_QUIT(self.hostmask, reason)
+        qp = network.commands.events.QUIT(self.hostmask, reason)
         for channel in self.channels:
             channel.send(qp)
             self.part(channel, reason, False)

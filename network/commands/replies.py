@@ -8,7 +8,7 @@ class RPL_WELCOME(Command): #001
     def __init__(self, target):
         self.init("001")
         self.to(target)
-        self.arg(text("Welcome to the pyircd test server %s" % user.nick))
+        self.arg(text("Welcome to the pyircd test server %s" % target.nick))
 
 class RPL_YOURHOST(Command): #002
     def __init__(self, target):

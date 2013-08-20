@@ -1,4 +1,5 @@
 import network.handlers, network.servers, config, threading, irc.handlers, logger
+from network.commands.errors import *
 
 class Daemon:
     serverName = ""
@@ -67,7 +68,14 @@ class NodeDaemon(Daemon):
     def delegateRequest(self, handler, cmd):
         for hnd in self._commandHandlers:
             if cmd.command in hnd.handlesCommands:
-                hnd.handle(handler, cmd)
+               result = hnd.handle(handler, cmd)
+               if result == 0:
+                   pass # es ok
+               elif result == 1:
+                   pass # unhandled error
+            else:
+                #handler.request.send(ERR_UNKNOWNCOMMAND(handler.user, cmd.command).ToPacket())
+                pass
 
     def erase(self, user):
         for c in user.channels:

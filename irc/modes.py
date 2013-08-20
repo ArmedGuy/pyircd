@@ -244,7 +244,7 @@ class ChannelModes:
     def setvalue(self, key, value):
         if key in self._valuemodes:
             with self._modelock:
-                self._valuemodes[key] = value
+                self._valuemodes[key].set(value)
             return True
         else:
             return False

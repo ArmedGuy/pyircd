@@ -20,8 +20,10 @@ def text(data):
 # Base command-builder class
 class Command:
     _args = None
+    _len = 0
     def __init__():
         self._args = []
+        self._len = 0
     def init(self, cmd):
         self.arg(hostname())
         self.arg(cmd)
@@ -33,20 +35,26 @@ class Command:
     def arg(self, argument):
         if self._args == None:
             self._args = []
+        a = ""
         try:
-            self._args.append(str(argument))
+            a = str(argument)
         except:
-            self._args.append("%s" % argument)
+            a = "%s" % argument
+        self._args.append(a)
+        self._len = self._len + len(a) + 1
 
     # ToStuff
+    def __len__(self):
+        return self._len - 1
     def __str__(self):
         return self.ToString()
+
     def ToString(self):
         return ' '.join(self._args)
     def ToPacket(self):
         return "%s\r\n" % self
     def ToCommand(self):
-        return UserCommandString(self)
+        return UserCommandString(self.ToString())
 
 
 # parse incoming commands
