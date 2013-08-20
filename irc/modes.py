@@ -3,8 +3,9 @@ channel_modes = "ACGHIKLNOQRSVabcefhiklmnopqrstuvz"
 channelmodes_with_params = "befIovahqlLk"
 
 import config, re, threading, time
-import network.commands.replies, network.commands.events
-
+from network.commands.events import MODE
+from network.commands.replies import RPL_BANLIST, RPL_ENDOFBANLIST
+from network.commands.errors import *
 
 class ChannelModes:
     _modelock = None
@@ -112,7 +113,9 @@ class ChannelModes:
         return True
 
     def set(self, setter, modes):
-        result = self.parse(modes)
+        result = self.parse(setter, modes)
+        if not result:
+            return False
         set = []
         set.append([])
         set.append([])
@@ -187,17 +190,17 @@ class ChannelModes:
         if setModes != "":
             setModes = "%s %s" % (setModes, " ".join(args))
             if hasattr(setter, 'hostmask'):
-                self._channel.send(network.commands.events.MODE(setter.hostmask, self._channel.name, setModes))
+                self._channel.send(MODE(setter.hostmask, self._channel.name, setModes))
             else:
-                self._channel.send(network.commands.events.MODE(setter, self._channel.name, setModes))
+                self._channel.send(MODE(setter, self._channel.name, setModes))
     
     # add stuff
     def addsingle(self, setter, key): # + version
         if key in self._listmodes:
             if key in "b":
                 for i in self._listmodes["b"].list():
-                    setter.send(network.commands.replies.RPL_BANLIST(setter, self._channel.name, i[0], i[1], i[2]))
-                setter.send(network.commands.replies.RPL_ENDOFBANLIST(setter, self._channel.name))
+                    setter.send(RPL_BANLIST(setter, self._channel.name, i[0], i[1], i[2]))
+                setter.send(RPL_ENDOFBANLIST(setter, self._channel.name))
                 return 2
             else:
                 return 1
@@ -239,6 +242,10 @@ class ChannelModes:
         if key in self._listmodes:
             with self._modelock:
                 return self._listmodes[key].remove(value)
+        if key in self._valuemodes:
+            if self._valuemodes[key].match(value):
+                with self._modelock:
+                    return self._valuemodes[key].default(value)
         return False
     # get and set vaules
     def setvalue(self, key, value):
@@ -256,7 +263,7 @@ class ChannelModes:
             return None
     
     # parse modes
-    def parse(self, raw):
+    def parse(self, setter, raw):
         data = raw.split(" ")
         add = True
         addlist = []
@@ -271,15 +278,30 @@ class ChannelModes:
                 continue
             if add == True:
                 if (c in self._valuemodes or c in self._listmodes) and len(data) > 1:
-                    addlist.append((c, data[i+1]))
+                    try:
+                        addlist.append((c, data[i+1]))
+                    except IndexError:
+                        if hasattr(setter, 'nick'):
+                            setter.send(ERR_NEEDMOREPARAMS(setter, "MODE", "+%s" % c))
+                        return False
                     i = i + 1
                 else:
+                    if c in self._valuemodes or c not in "beI":
+                        if hasattr(setter, 'nick'):
+                            setter.send(ERR_NEEDMOREPARAMS(setter, "MODE", "+%s" % c))
+                        return False
+
                     addlist.append(c)
-                    if c in self._listmodes:
+                    if c in "beI":
                         break
             else:
                 if c in self._valuemodes or c in self._listmodes:
-                    removelist.append((c, data[i+1]))
+                    try:
+                        removelist.append((c, data[i+1]))
+                    except IndexError:
+                        if hasattr(setter, 'nick'):
+                            setter.send(ERR_NEEDMOREPARAMS(setter, "MODE", "-%s" % c))
+                        return False
                     i = i + 1
                 else:
                     removelist.append(c)
@@ -380,9 +402,9 @@ class UserModes:
             setModes = "%s-%s" % (setModes, "".join(set[0]))
 
         if hasattr(setter, 'hostmask'):
-            self._user.send(network.commands.events.MODE(setter.hostmask, self._user.nick, setModes))
+            self._user.send(MODE(setter.hostmask, self._user.nick, setModes))
         else:
-            self._user.send(network.commands.events.MODE(setter, self._user.nick, setModes))
+            self._user.send(MODE(setter, self._user.nick, setModes))
 
     def parse(self, raw):
         add = True
@@ -458,6 +480,7 @@ class ValueMode:
     
     def default(self):
         self._value = self._defValue
+        return True
     
     def isset(self):
         return (self._value != self._defValue)

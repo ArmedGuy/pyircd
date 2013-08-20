@@ -52,7 +52,7 @@ class ERR_NEEDMOREPARAMS(Command): # 461
         self.init("461")
         self.to(target)
         self.arg(command)
-        if param == "":
+        if param != "":
             self.arg(param)
         self.arg(text("Not enough parameters"))
 
