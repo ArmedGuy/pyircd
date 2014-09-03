@@ -1,1 +1,1 @@
-import irc.handlers, irc.user, irc.channel, irc.flags
+import irc.handlers, irc.user, irc.channel, irc.modes

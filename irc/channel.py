@@ -15,7 +15,7 @@ class Channel:
 
     def __init__(self, daemon, name):
         self._daemon = daemon
-        if name[0] == "~":
+        if name[0] == "#":
             self.globalchannel = False
             logger.info("Creating new local channel %s" % name)
         else:

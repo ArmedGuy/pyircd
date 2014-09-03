@@ -102,7 +102,7 @@ class NodeDaemon(Daemon):
         return None
     # channel management
     def channel(self, name, makeNew=True): # get or create a channel
-        if name[0] == "~":
+        if name[0] == "#":
             for c in self.channels:
                 if c.name == name:
                     return c

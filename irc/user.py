@@ -1,4 +1,4 @@
-import re, flags, logger, config, irc.modes, threading
+import re, logger, config, irc.modes, threading
 import network.commands.payloads, network.commands.replies, network.commands.events
 
 username_regex = re.compile("/\A([a-z_\-\[\]\\^{}|`][a-z0-9_\-\[\]\\^{}|`]{2,15})\z/i")

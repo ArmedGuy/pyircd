@@ -4,7 +4,7 @@ channelmodes_with_params = "befIovahqlLk"
 
 import config, re, threading, time
 from network.commands.events import MODE
-from network.commands.replies import RPL_BANLIST, RPL_ENDOFBANLIST
+from network.commands.replies import *
 from network.commands.errors import *
 
 class ChannelModes:

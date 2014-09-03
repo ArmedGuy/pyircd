@@ -1,4 +1,4 @@
-import config, irc.flags
+import config, irc.modes
 from command import *
 import network
 
@@ -28,8 +28,8 @@ class RPL_MYINFO(Command): #004
         self.to(target)
         self.arg(config.servername)
         self.arg(config.version)
-        self.arg(irc.flags.user_modes)
-        self.arg(irc.flags.channel_modes)
+        self.arg(irc.modes.user_modes)
+        self.arg(irc.modes.channel_modes)
 
 class RPL_ISUPPORT(Command): #005
     def __init__(self, target, support):
