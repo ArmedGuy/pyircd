@@ -1,5 +1,5 @@
-from network.commands.replies import *
-from network.commands.events import *
+from irc.commands.replies import *
+from irc.commands.events import *
 import config, sys
 class OnUserConnect():
     def __init__(self, daemon, user):

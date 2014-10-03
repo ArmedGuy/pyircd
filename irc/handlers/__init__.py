@@ -7,6 +7,7 @@ def getHandlers(daemon):
             ping.PingHandler(daemon),
             chan.JoinHandler(daemon),
             chan.PartHandler(daemon),
+            chan.KickHandler(daemon),
             mode.ModeHandler(daemon),
             topic.TopicHandler(daemon),
             msg.MsgHandler(daemon)

@@ -1,5 +1,5 @@
-import network.commands, network.handlers, network.servers, socket, time, md5, config
-from network.commands.events import NOTICE
+import irc.commands, network.handlers, network.servers, socket, time, md5, config
+from irc.commands.events import NOTICE
 def generateUserHostname(ip):
     if "." in ip:
         parts = ip.split(".")

@@ -1,5 +1,5 @@
-import irc.commandhandler, network.commands.events
-from network.commands.errors import *
+import irc.commandhandler, irc.commands.events
+from irc.commands.errors import *
 class MsgHandler(irc.commandhandler.CommandHandler):
     def __init__(self, daemon):
         self.handlesCommands = ["NOTICE", "PRIVMSG"]
@@ -19,9 +19,9 @@ class MsgHandler(irc.commandhandler.CommandHandler):
                 handler.user.send(ERR_NOTONCHANNEL(handler.user, target))
                 return 0 # no "not-in-channel" messages
             if cmd.command == "NOTICE":
-                c.send(network.commands.events.NOTICE(handler.user.hostmask, c.name, cmd.args[1]))
+                c.send(irc.commands.events.NOTICE(handler.user.hostmask, c.name, cmd.args[1]))
             else:
-                c.send(network.commands.events.PRIVMSG(handler.user.hostmask, c.name, cmd.args[1]))
+                c.send(irc.commands.events.PRIVMSG(handler.user.hostmask, c.name, cmd.args[1]))
         else: # user
             u = self._daemon.user(target)
             if not u:
@@ -31,7 +31,7 @@ class MsgHandler(irc.commandhandler.CommandHandler):
             # TODO: is there anything more to check?
 
             if cmd.command == "NOTICE":
-                u.send(network.commands.events.EVT_NOTICE(handler.user.hostmask, u.nick, cmd.args[1]))
+                u.send(irc.commands.events.EVT_NOTICE(handler.user.hostmask, u.nick, cmd.args[1]))
             else:
-                u.send(network.commands.events.EVT_PRIVMSG(handler.user.hostmask, u.nick, cmd.args[1]))
+                u.send(irc.commands.events.EVT_PRIVMSG(handler.user.hostmask, u.nick, cmd.args[1]))
         return 0

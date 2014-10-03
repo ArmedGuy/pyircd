@@ -1,5 +1,5 @@
-import irc.commandhandler, network.commands.payloads
-from network.commands.errors import *
+import irc.commandhandler, irc.commands.payloads
+from irc.commands.errors import *
 class ModeHandler(irc.commandhandler.CommandHandler):
     def __init__(self, daemon):
         self.handlesCommands = ["MODE"]
@@ -37,7 +37,7 @@ class ModeHandler(irc.commandhandler.CommandHandler):
                     if not c:
                         handler.user.send(ERR_NOSUCHCHANNEL(handler.user, target))
                         return 0 # channel did not exist
-                    network.commands.payloads.OnChannelMode(c, handler.user)
+                    irc.commands.payloads.OnChannelMode(c, handler.user)
                     return 0
                 """else: # user
                     u = self._daemon.user(target)

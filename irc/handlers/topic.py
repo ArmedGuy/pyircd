@@ -1,5 +1,5 @@
-import irc.commandhandler, network.commands.payloads, network.commands.replies, network.commands.events, time
-from network.commands.errors import *
+import irc.commandhandler, irc.commands.payloads, irc.commands.replies, irc.commands.events, time
+from irc.commands.errors import *
 class TopicHandler(irc.commandhandler.CommandHandler):
     def __init__(self, daemon):
         self.handlesCommands = ["TOPIC"]
@@ -20,17 +20,17 @@ class TopicHandler(irc.commandhandler.CommandHandler):
             if c.modes.match("t"):
                 if c.modes.matchany("hoaq", (n, n, n, n) ):
                     c.topic = (cmd.args[1], n, int(time.time()))
-                    c.send(network.commands.events.TOPIC(handler.user.hostmask, c.name, cmd.args[1]))
+                    c.send(irc.commands.events.TOPIC(handler.user.hostmask, c.name, cmd.args[1]))
                 else:
                     handler.user.send(ERR_NOPRIVILEGES(handler.user))
                     return 0 # no access
             else:
                 c.topic = (cmd.args[1], n, int(time.time()))
-                c.send(network.commands.events.TOPIC(handler.user.hostmask, c.name, cmd.args[1]))
+                c.send(irc.commands.events.TOPIC(handler.user.hostmask, c.name, cmd.args[1]))
         else:
             if c.topic != None:
-                network.commands.payloads.OnTopic(c, handler.user)
+                irc.commands.payloads.OnTopic(c, handler.user)
             else:
-                network.commands.replies.RPL_NOTOPIC(handler.user, c)
+                irc.commands.replies.RPL_NOTOPIC(handler.user, c)
         return 0
 

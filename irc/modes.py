@@ -3,9 +3,9 @@ channel_modes = "ACGHIKLNOQRSVabcefhiklmnopqrstuvz"
 channelmodes_with_params = "befIovahqlLk"
 
 import config, re, threading, time
-from network.commands.events import MODE
-from network.commands.replies import *
-from network.commands.errors import *
+from irc.commands.events import MODE
+from irc.commands.replies import *
+from irc.commands.errors import *
 
 class ChannelModes:
     _modelock = None

@@ -1,5 +1,5 @@
 import re, logger, config, irc.modes, threading
-import network.commands.payloads, network.commands.replies, network.commands.events
+import irc.commands.payloads, irc.commands.replies, irc.commands.events
 
 username_regex = re.compile("/\A([a-z_\-\[\]\\^{}|`][a-z0-9_\-\[\]\\^{}|`]{2,15})\z/i")
 
@@ -94,7 +94,7 @@ class User():
 
             self.channels.append(channel)
 
-            network.commands.payloads.OnJoinChannel(channel, self)
+            irc.commands.payloads.OnJoinChannel(channel, self)
 
             return 0
         else:
@@ -106,7 +106,7 @@ class User():
                 return False # user not even in channel, duh
 
             if isParting:
-                channel.send(network.commands.events.PART(self.hostmask, channel.name, reason))
+                channel.send(irc.commands.events.PART(self.hostmask, channel.name, reason))
             try:
                 channel.users.remove(self)
                 self.channels.remove(channel)
@@ -117,7 +117,7 @@ class User():
             pass
 
     def quit(self, reason="Leaving"):
-        qp = network.commands.events.QUIT(self.hostmask, reason)
+        qp = irc.commands.events.QUIT(self.hostmask, reason)
         for channel in self.channels:
             channel.send(qp)
             self.part(channel, reason, False)

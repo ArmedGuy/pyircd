@@ -39,6 +39,14 @@ class PART(Command):
         self.arg(chan)
         self.arg(text(msg))
 
+class KICK(Command):
+    def __init__(self, sender, chan, kicked, msg="Kicked"):
+        self.arg(":%s" % sender)
+        self.arg("KICK")
+        self.arg(chan)
+        self.arg(kicked)
+        self.arg(text(msg))
+
 class QUIT(Command):
     def __init__(self, sender, reason="Leaving"):
         self.arg(":%s" % sender)

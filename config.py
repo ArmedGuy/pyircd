@@ -9,7 +9,7 @@ type =  "node" # can be:
     * "master-node" - both a master and a node
 """
 
-servername = ".pie-studios.com" # unique servername for a network, starting with a "."(dot) will prefix the string with the underlying OS hostname
+servername = "irc.hardware.fail" # unique servername for a network, starting with a "."(dot) will prefix the string with the underlying OS hostname
 serverpassword = None
 
 host = "0.0.0.0" # host that this master/node will listen on
@@ -36,7 +36,7 @@ support = {
     "NICKLEN": "32",
     "TOPICLEN": "256",
     "STATUSMSG": "~&@%+",
-    "NETWORK": "Boardcast.in", # supposed to be replaced
+    "NETWORK": "Re3io", # supposed to be replaced
     "MAXLIST": "beI:250",
     "CHANLIMIT": "#~:75",
     "CHANNELLEN": "50",

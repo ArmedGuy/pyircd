@@ -1,4 +1,4 @@
-import irc.modes, config, network.commands.payloads, logger, time, threading
+import irc.modes, config, irc.commands.payloads, logger, time, threading
 class Channel:
     globalchannel = True # hashtag for global, ~ for local
     name = ""

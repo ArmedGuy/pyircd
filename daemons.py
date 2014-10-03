@@ -1,5 +1,5 @@
 import network.handlers, network.servers, config, threading, irc.handlers, logger
-from network.commands.errors import *
+from irc.commands.errors import *
 
 class Daemon:
     serverName = ""

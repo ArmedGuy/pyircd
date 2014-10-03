@@ -1,5 +1,5 @@
 import irc.commandhandler, logger, config
-from network.commands.errors import *
+from irc.commands.errors import *
 class JoinHandler(irc.commandhandler.CommandHandler):
     def __init__(self, daemon):
         self.handlesCommands = ["JOIN"]
@@ -49,3 +49,27 @@ class PartHandler(irc.commandhandler.CommandHandler):
                 handler.user.part(chan)
             return 0
 
+class KickHandler(irc.commandhandler.CommandHandler):
+    def __init__(self, daemon):
+        self.handlesCommands = ["KICK"]
+        self._daemon = daemon
+
+    def handle(self, handler, cmd):
+        if len(cmd.args) < 2:
+            handler.user.send(ERR_NEEDMOREPARAMS(handler.user, "KICK"))
+            return 0
+        chan = self._daemon.channel(cmd.args[0], False)
+        if not chan:
+            handler.user.send(ERR_NOSUCHCHANNEL(handler.user, cmd.args[0]))
+            return 0
+        else:
+            u = self._daemon.user(cmd.args[1])
+            if not u:
+                handler.user.send(ERR_NOSUCHNICK(handler.user, cmd.args[1]))
+            if u not in chan.users:
+                handler.user.send(ERR_NOTONCHANNEL(handler.user, cmd.args[1]))
+            ## TODO: check if kicker has more rights than the kicked
+            if len(cmd.args) == 3:
+                chan.send(irc.commands.events.KICK(handler.user.hostmask, chan.name, u.nick))
+            else:
+                chan.send(irc.commands.events.KICK(handler.user.hostmask, chan.name, u.nick))

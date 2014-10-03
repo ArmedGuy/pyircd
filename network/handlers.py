@@ -1,5 +1,5 @@
 import SocketServer, time, logger, config, sys, socket
-from network.commands.command import UserCommandString
+from irc.commands.command import UserCommandString
 from irc.handlers import *
 
 class InternalRequestHandler(SocketServer.BaseRequestHandler):

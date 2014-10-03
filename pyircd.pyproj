@@ -18,6 +18,12 @@
     <Compile Include="config.py" />
     <Compile Include="daemons.py" />
     <Compile Include="irc\commandhandler.py" />
+    <Compile Include="irc\commands\command.py" />
+    <Compile Include="irc\commands\errors.py" />
+    <Compile Include="irc\commands\events.py" />
+    <Compile Include="irc\commands\payloads.py" />
+    <Compile Include="irc\commands\replies.py" />
+    <Compile Include="irc\commands\__init__.py" />
     <Compile Include="irc\handlers\chan.py" />
     <Compile Include="irc\handlers\mode.py" />
     <Compile Include="irc\handlers\msg.py" />
@@ -36,11 +42,9 @@
     <Compile Include="network\handlers.py" />
     <Compile Include="network\servers.py" />
     <Compile Include="network\__init__.py" />
-    <Compile Include="network\commands\command.py" />
     <Compile Include="network\commands\errors.py" />
     <Compile Include="network\commands\payloads.py" />
     <Compile Include="network\commands\replies.py" />
-    <Compile Include="network\commands\__init__.py" />
     <Compile Include="tests\pyircbot.py" />
     <Compile Include="tests\__init__.py" />
     <Content Include="docs\endofmotd.txt">
@@ -54,6 +58,7 @@
   <ItemGroup>
     <Folder Include="irc" />
     <Folder Include="irc\handlers" />
+    <Folder Include="irc\commands\" />
     <Folder Include="network" />
     <Folder Include="network\commands" />
     <Folder Include="docs\" />
