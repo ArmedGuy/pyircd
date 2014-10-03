@@ -23,6 +23,8 @@ standard.queueJoinChannels(["#Pie-Studios"])
 
 bot.connect()
 """
+
+
  
 while True:
     time.sleep(1)

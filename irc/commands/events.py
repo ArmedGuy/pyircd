@@ -12,6 +12,12 @@ class NOTICE(Command):
         self.to(reciever)
         self.arg(text(msg))
 
+class NICK(Command):
+    def __init__(self, sender, newNick):
+        self.arg(":%s" % sender)
+        self.arg("NICK")
+        self.arg(newNick)
+
 class PRIVMSG(Command):
     def __init__(self, sender, reciever, msg):
         self.arg(":%s" % sender)

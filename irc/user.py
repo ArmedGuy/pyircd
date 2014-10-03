@@ -6,7 +6,6 @@ username_regex = re.compile("/\A([a-z_\-\[\]\\^{}|`][a-z0-9_\-\[\]\\^{}|`]{2,15}
 class User():
     _userlock = None
     GUID = -1
-    hostmask = ""
     
     nick = ""
     ident = ""
@@ -14,6 +13,11 @@ class User():
     real_hostname = ""
 
     realname = ""
+
+    @property
+    def hostmask(self):
+        return "%s!%s@%s" % (self.nick, self.ident, self.hostname)
+
     
     modes = None
 
@@ -29,7 +33,6 @@ class User():
         self.nick = nick
         self.ident = ident
         self.hostname = hostname
-        self.hostmask = "%s!%s@%s" % (nick, ident, hostname)
 
         self.modes = irc.modes.UserModes(self)
 

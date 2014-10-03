@@ -7,8 +7,10 @@ class NickHandler(irc.commandhandler.CommandHandler):
         if len(cmd.args) != 1:
             return
         if handler.user != None:
-            # change nick
-            pass
+            old = handler.user.hostmask
+            handler.user.nick = cmd.args[0]
+            for c in handler.user.channels:
+                c.send(irc.commands.events.NICK(old, handler.user.nick))
         else:
             # TODO: check if username is available and accepted
             if "user-auth-data" in handler.cache:
