@@ -38,7 +38,7 @@ class NodeDaemon(Daemon):
     netstats = None
     _isMasterConnected = False
     def __init__(self, host, port):
-
+        logger.info("Starting NodeDaemon on %s:%d" % (host, port))
         self._commandHandlers = irc.handlers.getHandlers(self)
 
         self.serverName = config.servername
@@ -54,6 +54,7 @@ class NodeDaemon(Daemon):
         self._serverThread["internal"] = threading.Thread(target=self._server["internal"].serve_forever)
         self._serverThread["internal"].daemon = True
         
+        logger.info("Starting internal server thread")
         self._serverThread["internal"].start()
         
         if config.dumb:
@@ -62,7 +63,8 @@ class NodeDaemon(Daemon):
         self._server["irc"] = network.servers.ThreadedIrcServer((self.host, self.listenPort), self)
         self._serverThread["irc"] = threading.Thread(target=self._server["irc"].serve_forever)
         self._serverThread["irc"].daemon = True
-    
+        
+        logger.info("Starting IRC server thread")
         self._serverThread["irc"].start()
 
     def delegateRequest(self, handler, cmd):

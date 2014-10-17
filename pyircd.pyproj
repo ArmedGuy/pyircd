@@ -30,7 +30,6 @@
     <Compile Include="irc\handlers\ping.py" />
     <Compile Include="irc\handlers\topic.py" />
     <Compile Include="logger.py" />
-    <Compile Include="network\commands\events.py" />
     <Compile Include="run.py" />
     <Compile Include="__init__.py" />
     <Compile Include="irc\channel.py" />
@@ -42,9 +41,6 @@
     <Compile Include="network\handlers.py" />
     <Compile Include="network\servers.py" />
     <Compile Include="network\__init__.py" />
-    <Compile Include="network\commands\errors.py" />
-    <Compile Include="network\commands\payloads.py" />
-    <Compile Include="network\commands\replies.py" />
     <Compile Include="tests\pyircbot.py" />
     <Compile Include="tests\__init__.py" />
     <Content Include="docs\endofmotd.txt">

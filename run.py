@@ -3,7 +3,6 @@ from tests import pyircbot
 
 config.init()
 logger.init()
-logger.info("derp", True, False)
 
 daemon = daemons.NodeDaemon("0.0.0.0", 6667)
 daemon.start()

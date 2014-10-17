@@ -23,7 +23,7 @@ motd = [] # will be filled
 
 daemonstarted = "" # time when daemon was started
 
-debug = True
+debug = False
 
 # stuff that is listed in isupport
 isupport = []
